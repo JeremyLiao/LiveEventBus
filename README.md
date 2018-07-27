@@ -12,6 +12,8 @@
 ## 示例及Demo
 
 #### 订阅消息
+- **observe模式**
+生命周期感知，不需要手动取消订阅
 
 ```java
 LiveDataBus.get()
@@ -23,11 +25,31 @@ LiveDataBus.get()
 	    }
 	});
 ```
-
-#### 发送消息
+- **observeForever模式**
+需要手动取消订阅
 
 ```java
+LiveDataBus.get()
+	.with("key_name", String.class)
+	.observeForever(observer);
+```
+
+```java
+LiveDataBus.get()
+	.with("key_name", String.class)
+	.removeObserver(observer);
+```
+
+#### 发送消息
+- **set模式**
+订阅者会在当前线程收到消息
+```java
 LiveDataBus.get().with("key_name").setValue(value);
+```
+- **post模式**
+订阅者会在主线程收到消息
+```java
+LiveDataBus.get().with("key_name").postValue(value);
 ```
 
 简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)
