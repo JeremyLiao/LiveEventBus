@@ -54,6 +54,11 @@ LiveDataBus.get().with("key_name").postValue(value);
 
 简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)
 
-## 原理
+## 文档
+#### LiveDataBus实现原理
+LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
+[Android消息总线的演进之路：用LiveDataBus替代RxBus、EventBus](https://tech.meituan.com/Android_LiveDataBus.html)
 
-LiveDataBus的实现原理可参见作者在美团技术博客上的博文：[Android消息总线的演进之路：用LiveDataBus替代RxBus、EventBus](https://tech.meituan.com/Android_LiveDataBus.html)
+## 其他
+- 欢迎提Issue与作者交流
+- 欢迎提Pull request，帮助 fix bug，让LiveDataBus变得更强大、更好用

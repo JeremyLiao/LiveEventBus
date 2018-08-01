@@ -13,46 +13,35 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_name"
+        <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:onClick="@{()->handler.sendMsgBySetValue()}"
+            android:text="用SetValue发送消息" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{()->handler.sendMsg()}"
-            android:text="Send Message!" />
+            android:onClick="@{()->handler.sendMsgByPostValue()}"
+            android:text="用PostValue发送消息" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{()->handler.sendMsg1()}"
-            android:text="Send Message!" />
+            android:onClick="@{()->handler.sendMsgToForeverObserver()}"
+            android:text="给ForeverObserver发送消息" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{()->handler.sendMsgDelay5()}"
-            android:text="Send Message Delay 5!" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{()->handler.newActivityAndFinish()}"
-            android:text="New Activity And Finish!" />
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="@{()->handler.newActivityNotFinish()}"
-            android:text="New Activity Not Finish!" />
+            android:onClick="@{()->handler.startNewActivity()}"
+            android:text="Start一个新的Activity" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:onClick="@{()->handler.closeAll()}"
-            android:text="Close All!" />
+            android:text="关闭All Activity" />
 
     </LinearLayout>
 </layout>
