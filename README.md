@@ -1,7 +1,8 @@
 # LiveDataBus
 
 ### Android消息总线，基于LiveData，具有生命周期感知能力
-
+### 简单之美
+LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 ## 使用方法
 - Fork本项目
 - 或者直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
@@ -61,4 +62,4 @@ LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 
 ## 其他
 - 欢迎提Issue与作者交流
-- 欢迎提Pull request，帮助 fix bug，让LiveDataBus变得更强大、更好用
+- 欢迎提Pull request，帮助 fix bug，增加新的feature，让LiveDataBus变得更强大、更好用
