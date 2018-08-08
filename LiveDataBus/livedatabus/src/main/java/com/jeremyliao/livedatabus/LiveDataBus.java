@@ -32,14 +32,14 @@ public final class LiveDataBus {
         return SingletonHolder.DEFAULT_BUS;
     }
 
-    public <T> MutableLiveData<T> with(String key, Class<T> type) {
+    public <T> BusMutableLiveData<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new BusMutableLiveData<>());
         }
-        return (MutableLiveData<T>) bus.get(key);
+        return (BusMutableLiveData<T>) bus.get(key);
     }
 
-    public MutableLiveData<Object> with(String key) {
+    public BusMutableLiveData<Object> with(String key) {
         return with(key, Object.class);
     }
 
@@ -75,7 +75,7 @@ public final class LiveDataBus {
         }
     }
 
-    private static class BusMutableLiveData<T> extends MutableLiveData<T> {
+    public static class BusMutableLiveData<T> extends MutableLiveData<T> {
 
         private Map<Observer, Observer> observerMap = new HashMap<>();
 
@@ -89,12 +89,20 @@ public final class LiveDataBus {
             }
         }
 
+        public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
+            super.observe(owner, observer);
+        }
+
         @Override
         public void observeForever(@NonNull Observer<T> observer) {
             if (!observerMap.containsKey(observer)) {
                 observerMap.put(observer, new ObserverWrapper(observer));
             }
             super.observeForever(observerMap.get(observer));
+        }
+
+        public void observeStickyForever(@NonNull Observer<T> observer) {
+            super.observeForever(observer);
         }
 
         @Override

@@ -1,19 +1,22 @@
 # LiveDataBus
 
-### Android消息总线，基于LiveData，具有生命周期感知能力
+### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
+
 ### 简单之美
 LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
-## 使用方法
+
+## 如何使用本项目
+
 - Fork本项目
 - 或者直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
 
 ## 依赖
 依赖Android Architecture Components，具体可参见gradle文件[build.gradle](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/build.gradle)
 
-## 示例及Demo
+## 调用方式
 
 #### 订阅消息
-- **observe模式**
+- **observe**
 生命周期感知，不需要手动取消订阅
 
 ```java
@@ -26,7 +29,7 @@ LiveDataBus.get()
 	    }
 	});
 ```
-- **observeForever模式**
+- **observeForever**
 需要手动取消订阅
 
 ```java
@@ -42,15 +45,45 @@ LiveDataBus.get()
 ```
 
 #### 发送消息
-- **set模式**
-订阅者会在当前线程收到消息
+- **setValue**
+在主线程发送消息
 ```java
 LiveDataBus.get().with("key_name").setValue(value);
 ```
-- **post模式**
-订阅者会在主线程收到消息
+- **postValue**
+在后台线程发送消息，订阅者会在主线程收到消息
 ```java
 LiveDataBus.get().with("key_name").postValue(value);
+```
+#### Sticky模式
+支持在注册订阅者的时候设置Sticky模式，这样订阅者可以接收到订阅之前发送的消息
+
+- **observeSticky**
+生命周期感知，不需要手动取消订阅，Sticky模式
+
+```java
+LiveDataBus.get()
+        .with("sticky_key", String.class)
+        .observeSticky(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+             
+            }
+        });
+```
+- **observeStickyForever**
+需要手动取消订阅，Sticky模式
+
+```java
+LiveDataBus.get()
+        .with("sticky_key", String.class)
+        .observeStickyForever(observer);
+```
+
+```java
+LiveDataBus.get()
+        .with("sticky_key", String.class)
+        .removeObserver(observer);
 ```
 
 简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)

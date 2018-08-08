@@ -69,7 +69,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
                 .map(new Func1<Random, String>() {
                     @Override
                     public String call(Random random) {
-                        return random.nextInt(100) + "";
+                        return "Message By SetValue: " + random.nextInt(100);
                     }
                 })
                 .subscribe(new Action1<String>() {
@@ -85,7 +85,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
                 .map(new Func1<Random, String>() {
                     @Override
                     public String call(Random random) {
-                        return random.nextInt(100) + "";
+                        return "Message By PostValue: " + random.nextInt(100);
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -102,7 +102,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
                 .map(new Func1<Random, String>() {
                     @Override
                     public String call(Random random) {
-                        return random.nextInt(100) + "";
+                        return "Message To ForeverObserver: " + random.nextInt(100);
                     }
                 })
                 .subscribe(new Action1<String>() {
@@ -111,6 +111,26 @@ public class LiveDataBusDemo extends AppCompatActivity {
                         LiveDataBus.get().with("key2").setValue(s);
                     }
                 });
+    }
+
+    public void sendMsgToStickyReceiver() {
+        Observable.just(new Random())
+                .map(new Func1<Random, String>() {
+                    @Override
+                    public String call(Random random) {
+                        return "Message Sticky: " + random.nextInt(100);
+                    }
+                })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LiveDataBus.get().with("sticky_key").setValue(s);
+                    }
+                });
+    }
+
+    public void startStickyActivity() {
+        startActivity(new Intent(this, StickyActivity.class));
     }
 
     public void startNewActivity() {
