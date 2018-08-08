@@ -86,6 +86,17 @@ LiveDataBus.get()
         .removeObserver(observer);
 ```
 
+## 示例和DEMO
+
+##### 基本功能
+![基本功能](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img1.gif)
+
+##### Sticky模式
+![sticky](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img2.gif)
+
+##### 一个简单的应用，发消息关闭所有activity
+![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img3.gif)
+
 简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)
 
 ## 文档
