@@ -5,6 +5,11 @@
 ### 简单之美
 LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
+### 主要commit记录
+1. 主要功能完成（Jul 11, 2018）
+2. 支持Sticky（Aug 8, 2018）
+3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
+
 ## 如何使用本项目
 
 - Fork本项目
@@ -107,3 +112,10 @@ LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 ## 其他
 - 欢迎提Issue与作者交流
 - 欢迎提Pull request，帮助 fix bug，增加新的feature，让LiveDataBus变得更强大、更好用
+
+## More Open Source by JeremyLiao
+
+1. [tensorflow-lite-sdk](https://github.com/JeremyLiao/tensorflow-lite-sdk) 一个更加通用的Tensorflow-Lite Android SDK
+2. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
+3. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
+4. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架

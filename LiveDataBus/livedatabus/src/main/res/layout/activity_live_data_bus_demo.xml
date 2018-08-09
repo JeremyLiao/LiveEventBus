@@ -72,5 +72,12 @@
             android:onClick="@{()->handler.startStickyActivity()}"
             android:text="Start Sticky Activity（测试Sticky）" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.postValueCountTest()}"
+            android:text="测试PostValue会丢失消息的问题" />
+
     </LinearLayout>
 </layout>

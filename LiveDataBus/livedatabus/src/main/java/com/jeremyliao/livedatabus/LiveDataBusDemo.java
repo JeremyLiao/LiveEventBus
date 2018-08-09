@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 import com.jeremyliao.livedatabus.databinding.ActivityLiveDataBusDemoBinding;
 
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import rx.Observable;
 import rx.functions.Action1;
@@ -20,6 +23,8 @@ import rx.schedulers.Schedulers;
 public class LiveDataBusDemo extends AppCompatActivity {
 
     private ActivityLiveDataBusDemoBinding binding;
+    private int sendCount = 0;
+    private int receiveCount = 0;
     private Observer<String> observer = new Observer<String>() {
         @Override
         public void onChanged(@Nullable String s) {
@@ -52,6 +57,14 @@ public class LiveDataBusDemo extends AppCompatActivity {
                         if (b) {
                             finish();
                         }
+                    }
+                });
+        LiveDataBus.get()
+                .with("multi_thread_count", String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        receiveCount++;
                     }
                 });
     }
@@ -139,5 +152,27 @@ public class LiveDataBusDemo extends AppCompatActivity {
 
     public void closeAll() {
         LiveDataBus.get().with("close_all_page").setValue(true);
+    }
+
+    public void postValueCountTest() {
+        sendCount = 1000;
+        receiveCount = 0;
+        ExecutorService threadPool = Executors.newFixedThreadPool(2);
+//        ExecutorService threadPool = Executors.newSingleThreadExecutor();
+        for (int i = 0; i < sendCount; i++) {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    LiveDataBus.get().with("multi_thread_count").postValue("test_data");
+                }
+            });
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(LiveDataBusDemo.this, "sendCount: " + sendCount +
+                        " | receiveCount: " + receiveCount, Toast.LENGTH_LONG).show();
+            }
+        }, 1000);
     }
 }
