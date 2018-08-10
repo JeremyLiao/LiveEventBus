@@ -119,3 +119,4 @@ LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 2. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
 3. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
 4. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
+5. [rxjava-retry](https://github.com/JeremyLiao/rxjava-retry) 封装了几个处理RxJava Retry操作的类
