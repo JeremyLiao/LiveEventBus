@@ -5,10 +5,15 @@
 ### 简单之美
 LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
-### 主要commit记录
+### 分支介绍
+- **master** 主分支，主要采用继承LiveData的方式
+- **live-event** 由于主分支的LiveDataBus存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了master分支需要hook的问题
+
+### 主要功能迭代记录
 1. 主要功能完成（Jul 11, 2018）
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
+4. 新建分支live-event，解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
 
 ## 如何使用本项目
 
@@ -101,6 +106,10 @@ LiveDataBus.get()
 
 ##### 一个简单的应用，发消息关闭所有activity
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img3.gif)
+
+##### live-event,解决了发送给Stop状态Observer消息无法及时收到的问题（请切换至live-event分支）
+![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img4.gif)
+![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img5.gif)
 
 简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)
 
