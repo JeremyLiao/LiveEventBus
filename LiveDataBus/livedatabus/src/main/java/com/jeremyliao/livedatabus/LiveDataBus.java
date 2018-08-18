@@ -1,6 +1,5 @@
 package com.jeremyliao.livedatabus;
 
-import android.arch.core.executor.ArchTaskExecutor;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
@@ -35,50 +34,34 @@ public final class LiveDataBus {
         return SingletonHolder.DEFAULT_BUS;
     }
 
-    public synchronized <T> BusMutableLiveData<T> with(String key, Class<T> type) {
+    public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new BusMutableLiveData<>());
         }
-        return (BusMutableLiveData<T>) bus.get(key);
+        return (Observable<T>) bus.get(key);
     }
 
-    public BusMutableLiveData<Object> with(String key) {
+    public Observable<Object> with(String key) {
         return with(key, Object.class);
     }
 
-    private static class ObserverWrapper<T> implements Observer<T> {
+    public interface Observable<T> {
+        void setValue(T value);
 
-        private Observer<T> observer;
+        void postValue(T value);
 
-        public ObserverWrapper(Observer<T> observer) {
-            this.observer = observer;
-        }
+        void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
-        @Override
-        public void onChanged(@Nullable T t) {
-            if (observer != null) {
-                if (isCallOnObserve()) {
-                    return;
-                }
-                observer.onChanged(t);
-            }
-        }
+        void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
-        private boolean isCallOnObserve() {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            if (stackTrace != null && stackTrace.length > 0) {
-                for (StackTraceElement element : stackTrace) {
-                    if ("android.arch.lifecycle.LiveData".equals(element.getClassName()) &&
-                            "observeForever".equals(element.getMethodName())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
+        void observeForever(@NonNull Observer<T> observer);
+
+        void observeStickyForever(@NonNull Observer<T> observer);
+
+        void removeObserver(@NonNull Observer<T> observer);
     }
 
-    public static class BusMutableLiveData<T> extends MutableLiveData<T> {
+    private static class BusMutableLiveData<T> extends MutableLiveData<T> implements Observable<T> {
 
         private class PostValueTask implements Runnable {
             private Object newValue;
@@ -164,6 +147,38 @@ public final class LiveDataBus {
             Object objectVersion = fieldVersion.get(this);
             //set wrapper's version
             fieldLastVersion.set(objectWrapper, objectVersion);
+        }
+    }
+
+    private static class ObserverWrapper<T> implements Observer<T> {
+
+        private Observer<T> observer;
+
+        public ObserverWrapper(Observer<T> observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void onChanged(@Nullable T t) {
+            if (observer != null) {
+                if (isCallOnObserve()) {
+                    return;
+                }
+                observer.onChanged(t);
+            }
+        }
+
+        private boolean isCallOnObserve() {
+            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+            if (stackTrace != null && stackTrace.length > 0) {
+                for (StackTraceElement element : stackTrace) {
+                    if ("android.arch.lifecycle.LiveData".equals(element.getClassName()) &&
+                            "observeForever".equals(element.getMethodName())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }
