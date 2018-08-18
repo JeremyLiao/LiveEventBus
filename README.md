@@ -9,7 +9,7 @@ LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于
 - **master** 主分支，主要采用继承LiveData的方式
 - **live-event** 由于主分支的LiveDataBus存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了master分支需要hook的问题
 
-### 主要功能迭代记录
+### 主要功能Commit记录
 1. 主要功能完成（Jul 11, 2018）
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
