@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 public final class LiveDataBus {
 
-    private static  final long MIN_INTERVAL = 1000;
-    private static long mInterval;
 
     private final Map<String, BusMutableLiveData<Object>> bus;
 
@@ -50,6 +48,7 @@ public final class LiveDataBus {
     }
 
     public interface Observable<T> {
+
         void setValue(T value);
 
         void postValue(T value);
