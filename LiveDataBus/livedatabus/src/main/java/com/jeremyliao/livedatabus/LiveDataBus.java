@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hailiangliao on 2018/7/4.
@@ -53,9 +54,9 @@ public final class LiveDataBus {
 
         void postValue(T value);
 
-        void postValueDelay(T value,long delay);
+        void postValueDelay(T value,long delay, TimeUnit unit);
 
-        void postValueInterval(T value,long interval);
+        void postValueInterval(T value, long interval, TimeUnit unit);
 
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
@@ -88,25 +89,19 @@ public final class LiveDataBus {
         private Handler mainHandler = new Handler(Looper.getMainLooper());
 
         @Override
-        public void postValue(T value) {
-            mainHandler.post(new PostValueTask(value));
+        public void postValueDelay(T value, long delay,TimeUnit unit) {
+            mainHandler.postDelayed(new PostValueTask(value),unit.convert(delay,unit));
         }
 
         @Override
-        public void postValueDelay(T value, long delay) {
-            mainHandler.postDelayed(new PostValueTask(value),delay);
-        }
-
-        @Override
-        public void postValueInterval(final T value, long interval) {
-            mInterval = interval < MIN_INTERVAL ? MIN_INTERVAL : interval;
+        public void postValueInterval(final T value, final long interval, final TimeUnit unit) {
             mainHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     setValue(value);
-                    mainHandler.postDelayed(this,mInterval);
+                    mainHandler.postDelayed(this,unit.convert(interval,unit));
                 }
-            },mInterval);
+            },unit.convert(interval,unit));
         }
 
         @Override
