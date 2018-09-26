@@ -20,6 +20,9 @@ import java.util.Map;
 
 public final class LiveDataBus {
 
+    private static  final long MIN_INTERVAL = 1000;
+    private static long mInterval;
+
     private final Map<String, BusMutableLiveData<Object>> bus;
 
     private LiveDataBus() {
@@ -50,6 +53,10 @@ public final class LiveDataBus {
 
         void postValue(T value);
 
+        void postValueDelay(T value,long delay);
+
+        void postValueInterval(T value,long interval);
+
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
         void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
@@ -76,12 +83,30 @@ public final class LiveDataBus {
             }
         }
 
+
         private Map<Observer, Observer> observerMap = new HashMap<>();
         private Handler mainHandler = new Handler(Looper.getMainLooper());
 
         @Override
         public void postValue(T value) {
             mainHandler.post(new PostValueTask(value));
+        }
+
+        @Override
+        public void postValueDelay(T value, long delay) {
+            mainHandler.postDelayed(new PostValueTask(value),delay);
+        }
+
+        @Override
+        public void postValueInterval(final T value, long interval) {
+            mInterval = interval < MIN_INTERVAL ? MIN_INTERVAL : interval;
+            mainHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setValue(value);
+                    mainHandler.postDelayed(this,mInterval);
+                }
+            },mInterval);
         }
 
         @Override
