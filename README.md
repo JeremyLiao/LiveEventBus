@@ -3,25 +3,27 @@
 ### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
 
 ### 简单之美
-LiveDataBus的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
+[LiveDataBus](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
-### 分支介绍
-- **master** 主分支，主要采用继承LiveData的方式
-- **live-event** 由于主分支的LiveDataBus存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了master分支需要hook的问题
+### 不同实现
+- [**live-data-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-data-bus)
+基本实现，主要采用继承LiveData的方式
+- [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus) 由于live-data-bus的实现存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了live-data-bus需要hook的问题
 
 ### 主要功能Commit记录
 1. 主要功能完成（Jul 11, 2018）
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
 4. 新建分支live-event，解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
+5. 两种实现合并到master分支
 
 ## 如何使用本项目
 
 - Fork本项目
-- 或者直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
+- 使用live-data-bus实现方式可以直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
 
 ## 依赖
-依赖Android Architecture Components，具体可参见gradle文件[build.gradle](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/build.gradle)
+依赖Android Architecture Components，具体可参见gradle文件[build.gradle](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/build.gradle)
 
 ## 调用方式
 
@@ -107,11 +109,10 @@ LiveDataBus.get()
 ##### 一个简单的应用，发消息关闭所有activity
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img3.gif)
 
-##### live-event,解决了发送给Stop状态Observer消息无法及时收到的问题（请切换至live-event分支）
+##### [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus),解决了发送给Stop状态Observer消息无法及时收到的问题
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img4.gif)
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img5.gif)
 
-简单的Demo可参见：[LiveDataBusDemo.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/LiveDataBus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBusDemo.java)
 
 ## 文档
 #### LiveDataBus实现原理
@@ -125,7 +126,7 @@ LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 ## More Open Source by JeremyLiao
 
 1. [tensorflow-lite-sdk](https://github.com/JeremyLiao/tensorflow-lite-sdk) 一个更加通用的Tensorflow-Lite Android SDK
-2. [android-modular](https://github.com/JeremyLiao/android-modular) 一个组件化的实施方案和组件化基础设施框架
+2. [android-modular](https://github.com/JeremyLiao/android-modular) 一个组件化的实施方案
 3. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
 4. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
 5. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
