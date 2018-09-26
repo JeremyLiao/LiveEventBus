@@ -3,11 +3,11 @@
 ### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
 
 ### 简单之美
-[LiveDataBus](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)的整个实现就一个类，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
+[LiveDataBus](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)的整个实现就一个java文件，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
-### 不同实现
+### 不同的实现
 - [**live-data-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-data-bus)
-基本实现，主要采用继承LiveData的方式
+采用继承LiveData的方式实现，整个实现就一个java文件
 - [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus) 由于live-data-bus的实现存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了live-data-bus需要hook的问题
 
 ### 主要功能Commit记录
@@ -15,14 +15,15 @@
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
 4. 新建分支live-event，解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
-5. 两种实现合并到master分支
+5. 两种实现合并到master分支（Sep 26, 2018）
 
 ## 如何使用本项目
 
 - Fork本项目
-- 使用live-data-bus实现方式可以直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
+- 使用live-data-bus的实现可以直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
 
 ## 依赖
+- **live-data-bus**
 依赖Android Architecture Components，具体可参见gradle文件[build.gradle](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/build.gradle)
 
 ## 调用方式
