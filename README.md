@@ -5,7 +5,8 @@
 ### 简单之美
 [LiveDataBus](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)的整个实现就一个java文件，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
-### 不同的实现
+### LiveDataBus不同的实现
+LiveDataBus目前有两种实现：
 - [**live-data-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-data-bus)
 采用继承LiveData的方式实现，整个实现就一个java文件
 - [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus) 由于live-data-bus的实现存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了live-data-bus需要hook的问题
@@ -20,11 +21,12 @@
 ## 如何使用本项目
 
 - Fork本项目
-- 使用live-data-bus的实现可以直接拷贝源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)
+- 使用**live-data-bus**的LiveDataBus实现可以直接使用源码：[LiveDataBus.java](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)，依赖Android Architecture Components的LiveData组件
+- 使用**live-event-bus**的LiveDataBus实现也依赖Android Architecture Components的LiveData组件，并且需要在build.gradle中引用JCenter库：
 
-## 依赖
-- **live-data-bus**
-依赖Android Architecture Components，具体可参见gradle文件[build.gradle](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/build.gradle)
+```
+implementation 'com.jeremyliao:live-event-bus:0.0.1'
+```
 
 ## 调用方式
 
