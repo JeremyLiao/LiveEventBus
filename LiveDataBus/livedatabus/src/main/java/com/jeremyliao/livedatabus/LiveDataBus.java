@@ -57,6 +57,8 @@ public final class LiveDataBus {
 
         void postValueInterval(T value, long interval, TimeUnit unit);
 
+        void stopPostInterval();
+
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
         void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
@@ -84,8 +86,28 @@ public final class LiveDataBus {
         }
 
 
+        private class IntervalValueTask implements Runnable {
+            private Object newValue;
+            private long interval;
+            private TimeUnit unit;
+
+
+            public IntervalValueTask(Object newValue, long interval, TimeUnit unit) {
+                this.newValue = newValue;
+                this.interval = interval;
+                this.unit = unit;
+            }
+
+            @Override
+            public void run() {
+                setValue((T) newValue);
+                mainHandler.postDelayed(this,unit.convert(interval,unit));
+            }
+        }
+
         private Map<Observer, Observer> observerMap = new HashMap<>();
         private Handler mainHandler = new Handler(Looper.getMainLooper());
+        private IntervalValueTask intervalTask;
 
         @Override
         public void postValueDelay(T value, long delay,TimeUnit unit) {
@@ -93,15 +115,19 @@ public final class LiveDataBus {
         }
 
         @Override
-        public void postValueInterval(final T value, final long interval, final TimeUnit unit) {
-            mainHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setValue(value);
-                    mainHandler.postDelayed(this,unit.convert(interval,unit));
-                }
-            },unit.convert(interval,unit));
+        public void stopPostInterval() {
+            if(intervalTask!= null){
+                mainHandler.removeCallbacks(intervalTask);
+                intervalTask = null;
+            }
         }
+
+        @Override
+        public void postValueInterval(final T value, final long interval, final TimeUnit unit) {
+            intervalTask = new IntervalValueTask(value,interval,unit);
+            mainHandler.postDelayed(intervalTask,unit.convert(interval,unit));
+        }
+
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
