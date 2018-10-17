@@ -55,10 +55,6 @@ public final class LiveDataBus {
 
         void postValueDelay(T value, long delay, TimeUnit unit);
 
-        void postValueInterval(T value, long interval, TimeUnit unit,@NonNull String taskName);
-
-        void stopPostInterval(@NonNull String taskName);
-
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
         void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
@@ -106,7 +102,6 @@ public final class LiveDataBus {
         }
 
         private Map<Observer, Observer> observerMap = new HashMap<>();
-        private Map<String,IntervalValueTask> intervalTasks = new HashMap<>();
         private Handler mainHandler = new Handler(Looper.getMainLooper());
 
         @Override
@@ -114,24 +109,6 @@ public final class LiveDataBus {
             mainHandler.postDelayed(new PostValueTask(value),unit.convert(delay,unit));
         }
 
-        @Override
-        public void stopPostInterval(@NonNull String taskName) {
-            IntervalValueTask  intervalTask  = intervalTasks.get(taskName);
-            if(intervalTask!= null){
-                mainHandler.removeCallbacks(intervalTask);
-                intervalTasks.remove(taskName);
-            }
-        }
-
-        @Override
-        public void postValueInterval(final T value, final long interval, final TimeUnit unit, @NonNull String taskName) {
-            if(taskName.isEmpty()){
-                return;
-            }
-            IntervalValueTask  intervalTask = new IntervalValueTask(value,interval,unit);
-            intervalTasks.put(taskName,intervalTask);
-            mainHandler.postDelayed(intervalTask,unit.convert(interval,unit));
-        }
 
 
         @Override
