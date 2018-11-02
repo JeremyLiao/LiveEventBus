@@ -13,12 +13,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hailiangliao on 2018/7/4.
  */
 
 public final class LiveDataBus {
+
 
     private final Map<String, BusMutableLiveData<Object>> bus;
 
@@ -46,9 +48,12 @@ public final class LiveDataBus {
     }
 
     public interface Observable<T> {
+
         void setValue(T value);
 
         void postValue(T value);
+
+        void postValueDelay(T value, long delay, TimeUnit unit);
 
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
@@ -80,8 +85,8 @@ public final class LiveDataBus {
         private Handler mainHandler = new Handler(Looper.getMainLooper());
 
         @Override
-        public void postValue(T value) {
-            mainHandler.post(new PostValueTask(value));
+        public void postValueDelay(T value, long delay, TimeUnit unit) {
+            mainHandler.postDelayed(new PostValueTask(value), unit.convert(delay, unit));
         }
 
         @Override
