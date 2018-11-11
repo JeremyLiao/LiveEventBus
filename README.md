@@ -128,9 +128,10 @@ LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 
 ## More Open Source by JeremyLiao
 
-1. [tensorflow-lite-sdk](https://github.com/JeremyLiao/tensorflow-lite-sdk) 一个更加通用的Tensorflow-Lite Android SDK
-2. [android-modular](https://github.com/JeremyLiao/android-modular) 一个组件化的实施方案
-3. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
-4. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
-5. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
-6. [rxjava-retry](https://github.com/JeremyLiao/rxjava-retry) 封装了几个处理RxJava Retry操作的类
+1. [FastSharedPreferences](https://github.com/JeremyLiao/FastSharedPreferences) 一个Android平台的高性能key-value组件
+2. [tensorflow-lite-sdk](https://github.com/JeremyLiao/tensorflow-lite-sdk) 一个更加通用的Tensorflow-Lite Android SDK
+3. [android-modular](https://github.com/JeremyLiao/android-modular) 一个组件化的实施方案
+4. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
+5. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
+6. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
+7. [rxjava-retry](https://github.com/JeremyLiao/rxjava-retry) 封装了几个处理RxJava Retry操作的类
