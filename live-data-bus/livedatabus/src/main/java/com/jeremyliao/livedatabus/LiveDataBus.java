@@ -1,6 +1,8 @@
 package com.jeremyliao.livedatabus;
 
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LifecycleRegistry;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.Observer;
@@ -20,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 public final class LiveDataBus {
-
 
     private final Map<String, BusMutableLiveData<Object>> bus;
 
@@ -85,18 +86,39 @@ public final class LiveDataBus {
         private Handler mainHandler = new Handler(Looper.getMainLooper());
 
         @Override
+        public void postValue(T value) {
+            mainHandler.post(new PostValueTask(value));
+        }
+
+        @Override
         public void postValueDelay(T value, long delay, TimeUnit unit) {
             mainHandler.postDelayed(new PostValueTask(value), unit.convert(delay, unit));
         }
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observe(owner, observer);
-            try {
-                hook(observer);
-            } catch (Exception e) {
-                e.printStackTrace();
+            //store current state of LifecycleOwner
+            Lifecycle lifecycle = owner.getLifecycle();
+            Lifecycle.State currentState = lifecycle.getCurrentState();
+            int observerSize = getLifecycleObserverMapSize(lifecycle);
+            boolean needChangeState = currentState.isAtLeast(Lifecycle.State.STARTED);
+            if (needChangeState) {
+                //change the state of LifecycleOwner
+                setLifecycleState(lifecycle, Lifecycle.State.INITIALIZED);
+                //set observerSize to 0
+                setLifecycleObserverMapSize(lifecycle, -1);
             }
+            super.observe(owner, observer);
+            if (needChangeState) {
+                //get back the state of LifecycleOwner
+                setLifecycleState(lifecycle, currentState);
+                //set back observerSize
+                setLifecycleObserverMapSize(lifecycle, observerSize + 1);
+                //set Observer active
+                hookObserverActive(observer, true);
+            }
+            //set wrapper's version
+            hookObserverVersion(observer);
         }
 
         public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
@@ -126,10 +148,65 @@ public final class LiveDataBus {
             super.removeObserver(realObserver);
         }
 
-        private void hook(@NonNull Observer<T> observer) throws Exception {
-            //get wrapper's version
-            Class<LiveData> classLiveData = LiveData.class;
-            Field fieldObservers = classLiveData.getDeclaredField("mObservers");
+        private void setLifecycleObserverMapSize(Lifecycle lifecycle, int size) {
+            if (lifecycle == null) {
+                return;
+            }
+            if (!(lifecycle instanceof LifecycleRegistry)) {
+                return;
+            }
+            try {
+                Field observerMapField = LifecycleRegistry.class.getDeclaredField("mObserverMap");
+                observerMapField.setAccessible(true);
+                Object mObserverMap = observerMapField.get(lifecycle);
+                Class<?> superclass = mObserverMap.getClass().getSuperclass();
+                Field mSizeField = superclass.getDeclaredField("mSize");
+                mSizeField.setAccessible(true);
+                mSizeField.set(mObserverMap, size);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private int getLifecycleObserverMapSize(Lifecycle lifecycle) {
+            if (lifecycle == null) {
+                return 0;
+            }
+            if (!(lifecycle instanceof LifecycleRegistry)) {
+                return 0;
+            }
+            try {
+                Field observerMapField = LifecycleRegistry.class.getDeclaredField("mObserverMap");
+                observerMapField.setAccessible(true);
+                Object mObserverMap = observerMapField.get(lifecycle);
+                Class<?> superclass = mObserverMap.getClass().getSuperclass();
+                Field mSizeField = superclass.getDeclaredField("mSize");
+                mSizeField.setAccessible(true);
+                return (int) mSizeField.get(mObserverMap);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return 0;
+            }
+        }
+
+        private void setLifecycleState(Lifecycle lifecycle, Lifecycle.State state) {
+            if (lifecycle == null) {
+                return;
+            }
+            if (!(lifecycle instanceof LifecycleRegistry)) {
+                return;
+            }
+            try {
+                Field mState = LifecycleRegistry.class.getDeclaredField("mState");
+                mState.setAccessible(true);
+                mState.set(lifecycle, state);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        private Object getObserverWrapper(@NonNull Observer<T> observer) throws Exception {
+            Field fieldObservers = LiveData.class.getDeclaredField("mObservers");
             fieldObservers.setAccessible(true);
             Object objectObservers = fieldObservers.get(this);
             Class<?> classObservers = objectObservers.getClass();
@@ -140,18 +217,44 @@ public final class LiveDataBus {
             if (objectWrapperEntry instanceof Map.Entry) {
                 objectWrapper = ((Map.Entry) objectWrapperEntry).getValue();
             }
-            if (objectWrapper == null) {
-                throw new NullPointerException("Wrapper can not be bull!");
+            return objectWrapper;
+        }
+
+        private void hookObserverVersion(@NonNull Observer<T> observer) {
+            try {
+                //get wrapper's version
+                Object objectWrapper = getObserverWrapper(observer);
+                if (objectWrapper == null) {
+                    return;
+                }
+                Class<?> classObserverWrapper = objectWrapper.getClass().getSuperclass();
+                Field fieldLastVersion = classObserverWrapper.getDeclaredField("mLastVersion");
+                fieldLastVersion.setAccessible(true);
+                //get livedata's version
+                Field fieldVersion = LiveData.class.getDeclaredField("mVersion");
+                fieldVersion.setAccessible(true);
+                Object objectVersion = fieldVersion.get(this);
+                //set wrapper's version
+                fieldLastVersion.set(objectWrapper, objectVersion);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            Class<?> classObserverWrapper = objectWrapper.getClass().getSuperclass();
-            Field fieldLastVersion = classObserverWrapper.getDeclaredField("mLastVersion");
-            fieldLastVersion.setAccessible(true);
-            //get livedata's version
-            Field fieldVersion = classLiveData.getDeclaredField("mVersion");
-            fieldVersion.setAccessible(true);
-            Object objectVersion = fieldVersion.get(this);
-            //set wrapper's version
-            fieldLastVersion.set(objectWrapper, objectVersion);
+        }
+
+        private void hookObserverActive(@NonNull Observer<T> observer, boolean active) {
+            try {
+                //get wrapper's version
+                Object objectWrapper = getObserverWrapper(observer);
+                if (objectWrapper == null) {
+                    return;
+                }
+                Class<?> classObserverWrapper = objectWrapper.getClass().getSuperclass();
+                Field mActive = classObserverWrapper.getDeclaredField("mActive");
+                mActive.setAccessible(true);
+                mActive.set(objectWrapper, active);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

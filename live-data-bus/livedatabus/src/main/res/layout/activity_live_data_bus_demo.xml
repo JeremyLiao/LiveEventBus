@@ -79,5 +79,19 @@
             android:onClick="@{()->handler.postValueCountTest()}"
             android:text="测试PostValue会丢失消息的问题" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.testMessageSetBefore()}"
+            android:text="测试动态注册一个Observer会收到之前发送的消息的问题" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMessageSetBefore()}"
+            android:text="发送的消息给之前动态注册的Observer" />
+
     </LinearLayout>
 </layout>

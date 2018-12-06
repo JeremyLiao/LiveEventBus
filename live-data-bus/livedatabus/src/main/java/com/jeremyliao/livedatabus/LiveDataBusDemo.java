@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.jeremyliao.livedatabus.databinding.ActivityLiveDataBusDemoBinding;
@@ -25,6 +26,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
     private ActivityLiveDataBusDemoBinding binding;
     private int sendCount = 0;
     private int receiveCount = 0;
+    private String randomKey = null;
     private Observer<String> observer = new Observer<String>() {
         @Override
         public void onChanged(@Nullable String s) {
@@ -67,6 +69,41 @@ public class LiveDataBusDemo extends AppCompatActivity {
                         receiveCount++;
                     }
                 });
+        testMessageSetBeforeOnCreate();
+    }
+
+    private void testMessageSetBeforeOnCreate() {
+        //先发出一个消息
+        LiveDataBus.get().with("msg_set_before", String.class).setValue("msg set before");
+        //然后订阅这个消息
+        LiveDataBus.get()
+                .with("msg_set_before", String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        Toast.makeText(LiveDataBusDemo.this, s, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void testMessageSetBefore() {
+        //先动态生成一个key
+        randomKey = "key_random_" + new Random().nextInt();
+        //然后发出一个消息
+        LiveDataBus.get().with(randomKey, String.class).setValue("msg set before");
+        //然后订阅这个消息
+        LiveDataBus.get()
+                .with(randomKey, String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        Toast.makeText(LiveDataBusDemo.this, s, Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void sendMessageSetBefore() {
+        LiveDataBus.get().with(randomKey, String.class).setValue("msg set after");
     }
 
     @Override
