@@ -23,10 +23,20 @@ import rx.schedulers.Schedulers;
 
 public class LiveDataBusDemo extends AppCompatActivity {
 
-    private ActivityLiveDataBusDemoBinding binding;
+    public static final String KEY_TEST_OBSERVE = "key_test_observe";
+    public static final String KEY_TEST_OBSERVE_FOREVER = "key_test_observe_forever";
+    public static final String KEY_TEST_STICKY = "key_test_sticky";
+    public static final String KEY_TEST_MULTI_THREAD_POST = "key_test_multi_thread_post";
+    public static final String KEY_TEST_MSG_SET_BEFORE_ON_CREATE = "key_test_msg_set_before_on_create";
+    public static final String KEY_TEST_CLOSE_ALL_PAGE = "key_test_close_all_page";
+
+
     private int sendCount = 0;
     private int receiveCount = 0;
     private String randomKey = null;
+
+    private ActivityLiveDataBusDemoBinding binding;
+
     private Observer<String> observer = new Observer<String>() {
         @Override
         public void onChanged(@Nullable String s) {
@@ -41,7 +51,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
         binding.setHandler(this);
         binding.setLifecycleOwner(this);
         LiveDataBus.get()
-                .with("key1", String.class)
+                .with(KEY_TEST_OBSERVE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -49,10 +59,10 @@ public class LiveDataBusDemo extends AppCompatActivity {
                     }
                 });
         LiveDataBus.get()
-                .with("key2", String.class)
+                .with(KEY_TEST_OBSERVE_FOREVER, String.class)
                 .observeForever(observer);
         LiveDataBus.get()
-                .with("close_all_page", Boolean.class)
+                .with(KEY_TEST_CLOSE_ALL_PAGE, Boolean.class)
                 .observe(this, new Observer<Boolean>() {
                     @Override
                     public void onChanged(@Nullable Boolean b) {
@@ -62,7 +72,7 @@ public class LiveDataBusDemo extends AppCompatActivity {
                     }
                 });
         LiveDataBus.get()
-                .with("multi_thread_count", String.class)
+                .with(KEY_TEST_MULTI_THREAD_POST, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -74,16 +84,122 @@ public class LiveDataBusDemo extends AppCompatActivity {
 
     private void testMessageSetBeforeOnCreate() {
         //先发出一个消息
-        LiveDataBus.get().with("msg_set_before", String.class).setValue("msg set before");
+        LiveDataBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).setValue("msg set before");
         //然后订阅这个消息
         LiveDataBus.get()
-                .with("msg_set_before", String.class)
+                .with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
                         Toast.makeText(LiveDataBusDemo.this, s, Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LiveDataBus.get()
+                .with(KEY_TEST_OBSERVE_FOREVER, String.class)
+                .removeObserver(observer);
+    }
+
+    public void sendMsgBySetValue() {
+        Observable.just(new Random())
+                .map(new Func1<Random, String>() {
+                    @Override
+                    public String call(Random random) {
+                        return "Message By SetValue: " + random.nextInt(100);
+                    }
+                })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LiveDataBus.get().with(KEY_TEST_OBSERVE).setValue(s);
+                    }
+                });
+    }
+
+    public void sendMsgByPostValue() {
+        Observable.just(new Random())
+                .map(new Func1<Random, String>() {
+                    @Override
+                    public String call(Random random) {
+                        return "Message By PostValue: " + random.nextInt(100);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LiveDataBus.get().with(KEY_TEST_OBSERVE).postValue(s);
+                    }
+                });
+    }
+
+    public void sendMsgToForeverObserver() {
+        Observable.just(new Random())
+                .map(new Func1<Random, String>() {
+                    @Override
+                    public String call(Random random) {
+                        return "Message To ForeverObserver: " + random.nextInt(100);
+                    }
+                })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LiveDataBus.get().with(KEY_TEST_OBSERVE_FOREVER).setValue(s);
+                    }
+                });
+    }
+
+    public void sendMsgToStickyReceiver() {
+        Observable.just(new Random())
+                .map(new Func1<Random, String>() {
+                    @Override
+                    public String call(Random random) {
+                        return "Message Sticky: " + random.nextInt(100);
+                    }
+                })
+                .subscribe(new Action1<String>() {
+                    @Override
+                    public void call(String s) {
+                        LiveDataBus.get().with(KEY_TEST_STICKY).setValue(s);
+                    }
+                });
+    }
+
+    public void startStickyActivity() {
+        startActivity(new Intent(this, StickyActivity.class));
+    }
+
+    public void startNewActivity() {
+        startActivity(new Intent(this, LiveDataBusDemo.class));
+    }
+
+    public void closeAll() {
+        LiveDataBus.get().with(KEY_TEST_CLOSE_ALL_PAGE).setValue(true);
+    }
+
+    public void postValueCountTest() {
+        sendCount = 1000;
+        receiveCount = 0;
+        ExecutorService threadPool = Executors.newFixedThreadPool(2);
+        for (int i = 0; i < sendCount; i++) {
+            threadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    LiveDataBus.get().with(KEY_TEST_MULTI_THREAD_POST).postValue("test_data");
+                }
+            });
+        }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(LiveDataBusDemo.this, "sendCount: " + sendCount +
+                        " | receiveCount: " + receiveCount, Toast.LENGTH_LONG).show();
+            }
+        }, 1000);
     }
 
     public void testMessageSetBefore() {
@@ -104,112 +220,5 @@ public class LiveDataBusDemo extends AppCompatActivity {
 
     public void sendMessageSetBefore() {
         LiveDataBus.get().with(randomKey, String.class).setValue("msg set after");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        LiveDataBus.get()
-                .with("key2", String.class)
-                .removeObserver(observer);
-    }
-
-    public void sendMsgBySetValue() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message By SetValue: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveDataBus.get().with("key1").setValue(s);
-                    }
-                });
-    }
-
-    public void sendMsgByPostValue() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message By PostValue: " + random.nextInt(100);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveDataBus.get().with("key1").postValue(s);
-                    }
-                });
-    }
-
-    public void sendMsgToForeverObserver() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message To ForeverObserver: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveDataBus.get().with("key2").setValue(s);
-                    }
-                });
-    }
-
-    public void sendMsgToStickyReceiver() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message Sticky: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveDataBus.get().with("sticky_key").setValue(s);
-                    }
-                });
-    }
-
-    public void startStickyActivity() {
-        startActivity(new Intent(this, StickyActivity.class));
-    }
-
-    public void startNewActivity() {
-        startActivity(new Intent(this, LiveDataBusDemo.class));
-    }
-
-    public void closeAll() {
-        LiveDataBus.get().with("close_all_page").setValue(true);
-    }
-
-    public void postValueCountTest() {
-        sendCount = 1000;
-        receiveCount = 0;
-        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-//        ExecutorService threadPool = Executors.newSingleThreadExecutor();
-        for (int i = 0; i < sendCount; i++) {
-            threadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    LiveDataBus.get().with("multi_thread_count").postValue("test_data");
-                }
-            });
-        }
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(LiveDataBusDemo.this, "sendCount: " + sendCount +
-                        " | receiveCount: " + receiveCount, Toast.LENGTH_LONG).show();
-            }
-        }, 1000);
     }
 }

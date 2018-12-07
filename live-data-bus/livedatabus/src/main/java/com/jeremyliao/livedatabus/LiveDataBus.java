@@ -97,27 +97,27 @@ public final class LiveDataBus {
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            //store current state of LifecycleOwner
+            //保存LifecycleOwner的当前状态
             Lifecycle lifecycle = owner.getLifecycle();
             Lifecycle.State currentState = lifecycle.getCurrentState();
             int observerSize = getLifecycleObserverMapSize(lifecycle);
             boolean needChangeState = currentState.isAtLeast(Lifecycle.State.STARTED);
             if (needChangeState) {
-                //change the state of LifecycleOwner
+                //把LifecycleOwner的状态改为INITIALIZED
                 setLifecycleState(lifecycle, Lifecycle.State.INITIALIZED);
-                //set observerSize to 0
+                //set observerSize to -1，否则super.observe(owner, observer)的时候会无限循环
                 setLifecycleObserverMapSize(lifecycle, -1);
             }
             super.observe(owner, observer);
             if (needChangeState) {
-                //get back the state of LifecycleOwner
+                //重置LifecycleOwner的状态
                 setLifecycleState(lifecycle, currentState);
-                //set back observerSize
+                //重置observer size，因为又添加了一个observer，所以数量+1
                 setLifecycleObserverMapSize(lifecycle, observerSize + 1);
-                //set Observer active
+                //把Observer置为active
                 hookObserverActive(observer, true);
             }
-            //set wrapper's version
+            //更改Observer的version
             hookObserverVersion(observer);
         }
 

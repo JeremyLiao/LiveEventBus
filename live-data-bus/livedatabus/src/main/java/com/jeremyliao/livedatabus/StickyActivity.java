@@ -34,7 +34,7 @@ public class StickyActivity extends AppCompatActivity {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sticky_demo);
         binding.setLifecycleOwner(this);
         LiveDataBus.get()
-                .with("sticky_key", String.class)
+                .with(LiveDataBusDemo.KEY_TEST_STICKY, String.class)
                 .observeSticky(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -42,7 +42,7 @@ public class StickyActivity extends AppCompatActivity {
                     }
                 });
         LiveDataBus.get()
-                .with("sticky_key", String.class)
+                .with(LiveDataBusDemo.KEY_TEST_STICKY, String.class)
                 .observeStickyForever(observer);
     }
 
@@ -50,7 +50,7 @@ public class StickyActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         LiveDataBus.get()
-                .with("sticky_key", String.class)
+                .with(LiveDataBusDemo.KEY_TEST_STICKY, String.class)
                 .removeObserver(observer);
     }
 }
