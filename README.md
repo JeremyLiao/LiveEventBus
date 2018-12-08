@@ -11,13 +11,6 @@ LiveDataBus目前有两种实现：
 采用继承LiveData的方式实现，整个实现就一个java文件
 - [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus) 由于live-data-bus的实现存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了live-data-bus需要hook的问题
 
-### 主要功能Commit记录
-1. 主要功能完成（Jul 11, 2018）
-2. 支持Sticky（Aug 8, 2018）
-3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
-4. 新建分支live-event，解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
-5. 两种实现合并到master分支（Sep 26, 2018）
-
 ## 如何使用本项目
 
 - Fork本项目
@@ -121,6 +114,14 @@ LiveDataBus.get()
 #### LiveDataBus实现原理
 LiveDataBus的实现原理可参见作者在美团技术博客上的博文：
 [Android消息总线的演进之路：用LiveDataBus替代RxBus、EventBus](https://tech.meituan.com/Android_LiveDataBus.html)
+
+### 主要功能Commit记录
+1. 主要功能完成（Jul 11, 2018）
+2. 支持Sticky（Aug 8, 2018）
+3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
+4. 新建分支live-event，解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
+5. 两种实现合并到master分支（Sep 26, 2018）
+6. 解决了Resumed状态的Activity发生订阅，订阅者会收到订阅之前发布的消息的问题，特别感谢@MelonWXD发现了这个问题（Dec 8，2018）
 
 ## 其他
 - 欢迎提Issue与作者交流
