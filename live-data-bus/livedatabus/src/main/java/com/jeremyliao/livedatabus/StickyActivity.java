@@ -1,22 +1,12 @@
 package com.jeremyliao.livedatabus;
 
 import android.arch.lifecycle.Observer;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
-import com.jeremyliao.livedatabus.databinding.ActivityLiveDataBusDemoBinding;
 import com.jeremyliao.livedatabus.databinding.ActivityStickyDemoBinding;
-
-import java.util.Random;
-
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class StickyActivity extends AppCompatActivity {
 

@@ -1,24 +1,9 @@
 package com.jeremyliao.livedatabus;
 
 import android.arch.lifecycle.Observer;
-import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
-
-import com.jeremyliao.livedatabus.databinding.ActivityLiveDataBusDemoBinding;
-
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class TestActivity extends AppCompatActivity {
 
