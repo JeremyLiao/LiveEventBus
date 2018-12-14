@@ -22,19 +22,21 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
-
     //For Lifecycles, LiveData, and ViewModel
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation "android.arch.lifecycle:livedata:1.1.1"
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
-
     //rxjava
-    implementation group: 'io.reactivex', name: 'rxjava', version: '1.3.3'
-    implementation group: 'io.reactivex', name: 'rxandroid', version: '1.2.1'
+    implementation 'io.reactivex:rxjava:1.3.3'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+
+    //liveeventbus
+    implementation project(':liveeventbus')
+//    implementation 'com.jeremyliao:live-event-bus:0.0.1'
 
     //test
     testImplementation 'junit:junit:4.12'
