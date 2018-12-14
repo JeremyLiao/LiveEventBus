@@ -35,8 +35,8 @@ dependencies {
     implementation 'io.reactivex:rxandroid:1.2.1'
 
     //liveeventbus
-    implementation project(':liveeventbus')
-//    implementation 'com.jeremyliao:live-event-bus:0.0.1'
+//    implementation project(':liveeventbus')
+    implementation 'com.jeremyliao:live-event-bus:1.0.0'
 
     //test
     testImplementation 'junit:junit:4.12'
