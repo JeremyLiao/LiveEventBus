@@ -1,15 +1,20 @@
-# LiveDataBus
-
+# LiveDataBus  ![logo](/images/logo.svg)
 ### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
 
 ### 简单之美
 [LiveDataBus](https://github.com/JeremyLiao/LiveDataBus/blob/master/live-data-bus/livedatabus/src/main/java/com/jeremyliao/livedatabus/LiveDataBus.java)的整个实现就一个java文件，不超过150行代码。不需要过于繁杂的功能，简单好用，就是最好的：）
 
-### LiveDataBus不同的实现
-LiveDataBus目前有两种实现：
-- [**live-data-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-data-bus)
-采用继承LiveData的方式实现，整个实现就一个java文件
-- [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus) 由于live-data-bus的实现存在发送给Stop状态Observer消息无法及时收到的问题，这个问题采用继承LiveData的方式无法解决，所以把LiveData源码拷贝并命名成LiveEvent类，直接修改解决，并且也解决了live-data-bus需要hook的问题
+### LiveDataBus的两种实现
+#### [live-data-bus](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-data-bus)
+- [x] 采用继承LiveData的方式实现，整个实现就一个java文件
+- [x] 生命周期感知，消息随时订阅，自动取消订阅
+- [x] 支持Sticky粘性消息
+- [x] 非激活状态的Observer（如后台的Activity），可以在Observer的状态变成激活（如后台的Activity回到前台）时收到消息
+#### [live-event-bus](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus)
+- [x] 采用修改LiveData源码的方式实现
+- [x] 生命周期感知，消息随时订阅，自动取消订阅
+- [x] 支持Sticky粘性消息
+- [x] 非激活状态的Observer（例如后台的Activity），也可以立刻收到消息
 
 ## 如何使用本项目
 
@@ -105,7 +110,7 @@ LiveDataBus.get()
 ##### 一个简单的应用，发消息关闭所有activity
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img3.gif)
 
-##### [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus),解决了发送给Stop状态Observer消息无法及时收到的问题
+##### [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus)，解决了发送给Stop状态Observer消息无法及时收到的问题
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img4.gif)
 ![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img5.gif)
 
