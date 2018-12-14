@@ -102,17 +102,17 @@ LiveDataBus.get()
 ## 示例和DEMO
 
 ##### 基本功能
-![基本功能](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img1.gif)
+![基本功能](/images/img1.gif)
 
 ##### Sticky模式
-![sticky](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img2.gif)
+![sticky](/images/img2.gif)
 
 ##### 一个简单的应用，发消息关闭所有activity
-![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img3.gif)
+![close all](/images/img3.gif)
 
 ##### [**live-event-bus**](https://github.com/JeremyLiao/LiveDataBus/tree/master/live-event-bus)，解决了发送给Stop状态Observer消息无法及时收到的问题
-![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img4.gif)
-![close all](https://github.com/JeremyLiao/LiveDataBus/blob/master/images/img5.gif)
+![close all](/images/img4.gif)
+![close all](/images/img5.gif)
 
 
 ## 文档
