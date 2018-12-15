@@ -97,20 +97,23 @@ LiveEventBus.get()
 ```
 
 ## 示例和DEMO
-##### 基本功能
 - [x] 发送、接收消息
 - [x] Sticky模式
-- [x] 一个简单的应用场景，发消息关闭所有Activity
 
 ![基本功能](/images/img1.gif)
 ![sticky](/images/img2.gif)
-![close all](/images/img3.gif)
 
-##### [live-event-bus-v2](/live-event-bus-v2)的功能
-- [x] 演示发送一个消息给后台Activity，可以立刻收到消息
+- [x] 任何时候都可以订阅消息
+- [x] 一个简单的应用场景，发消息关闭所有Activity
 
-![v1](/images/img4.gif)
-![v2](/images/img5.gif)
+![register](/images/img3.gif)
+![close all](/images/img4.gif)
+
+- [x] 快速postValue也不会丢失消息
+- [x] [live-event-bus-v2](/live-event-bus-v2)发送一个消息给后台Activity，可以立刻收到消息
+
+![postvalue](/images/img5.gif)
+![v2](/images/img6.gif)
 
 ## 文档
 #### LiveEventBus实现原理
