@@ -39,7 +39,7 @@ public final class LiveEventBus {
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
-            bus.put(key, new BusMutableLiveData<>());
+            bus.put(key, new BusMutableLiveData<>(key));
         }
         return (Observable<T>) bus.get(key);
     }
@@ -82,8 +82,15 @@ public final class LiveEventBus {
             }
         }
 
+        @NonNull
+        private final String key;
         private Map<Observer, Observer> observerMap = new HashMap<>();
         private Handler mainHandler = new Handler(Looper.getMainLooper());
+
+
+        private BusMutableLiveData(String key) {
+            this.key = key;
+        }
 
         @Override
         public void postValue(T value) {
@@ -146,6 +153,9 @@ public final class LiveEventBus {
                 realObserver = observer;
             }
             super.removeObserver(realObserver);
+            if (!hasObservers()) {
+                LiveEventBus.get().bus.remove(key);
+            }
         }
 
         private void setLifecycleObserverMapSize(Lifecycle lifecycle, int size) {

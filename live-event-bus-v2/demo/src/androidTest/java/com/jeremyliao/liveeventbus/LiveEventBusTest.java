@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.jeremyliao.liveeventbus.helper.LiveEventBusTestHelper;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -290,4 +292,11 @@ public class LiveEventBusTest {
         });
     }
 
+    @Test
+    public void testRemoveObserve() throws Exception {
+        Assert.assertTrue(LiveEventBusTestHelper.getLiveEventBusCount() > 0);
+        rule.getActivity().finish();
+        Thread.sleep(500);
+        Assert.assertTrue(LiveEventBusTestHelper.getLiveEventBusCount() == 0);
+    }
 }
