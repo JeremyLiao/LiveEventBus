@@ -23,7 +23,7 @@
 - 使用**live-event-bus-v2**的LiveEventBus实现也依赖Android Architecture Components的LiveData组件，并且需要在build.gradle中引用JCenter库：
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.0.0'
+implementation 'com.jeremyliao:live-event-bus:1.1.0'
 ```
 
 ## 调用方式
