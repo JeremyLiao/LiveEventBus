@@ -129,7 +129,8 @@ LiveEventBus的实现原理可参见作者在美团技术博客上的博文：
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
 4. 解决发送给Stop状态Observer消息无法及时收到的问题（Aug 18, 2018）
-5. 解决了Resumed状态的Activity发生订阅，订阅者会收到订阅之前发布的消息的问题，特别感谢@MelonWXD发现了这个问题（Dec 8，2018）
+5. 解决了Resumed状态的Activity发生订阅，订阅者会收到订阅之前发布的消息的问题。特别感谢@MelonWXD发现了这个问题（Dec 8，2018）
+6. 在removeObserver的时候，检查livedata上有没有observer，没有则删除这个livadata，以减少内存占用。特别感谢@GreenhairTurtle提供的解决方案（Dec 27，2018）
 
 ## 其他
 - 欢迎提Issue与作者交流
