@@ -146,4 +146,5 @@ LiveEventBus的实现原理可参见作者在美团技术博客上的博文：
 6. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
 7. [rxjava-retry](https://github.com/JeremyLiao/rxjava-retry) 封装了几个处理RxJava Retry操作的类
 8. [retrofit-mock](https://github.com/JeremyLiao/retrofit-mock) 一个用于Retrofit mock response数据的工具
-9. [jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo) AndroidStudio运行jacoco计算测试覆盖率的Demo
+9. [jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo)  AndroidStudio运行jacoco计算测试覆盖率的Demo
+10. [android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 深入浅出Android Gradle
