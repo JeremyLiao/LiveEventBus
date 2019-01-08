@@ -188,11 +188,32 @@ public class LiveEventBusTest {
     }
 
     @Test
-    public void testPostValueDelay() throws Exception {
+    public void testPostValueDelay1000() throws Exception {
         LiveEventBus.get()
                 .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                .postValueDelay("value_test_set_value", 1000, TimeUnit.MILLISECONDS);
+                .postValueDelay("value_test_set_value", 1000);
         Thread.sleep(500);
+        Assert.assertNull(rule.getActivity().strResult);
+        Thread.sleep(1000);
+        Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
+    }
+
+    @Test
+    public void testPostValueDelay1s() throws Exception {
+        LiveEventBus.get()
+                .with(TestActivity.KEY_TEST_OBSERVE, String.class)
+                .postValueDelay("value_test_set_value", 1, TimeUnit.SECONDS);
+        Thread.sleep(500);
+        Assert.assertNull(rule.getActivity().strResult);
+        Thread.sleep(1000);
+        Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
+    }
+
+    @Test
+    public void testPostValueDelay500ms() throws Exception {
+        LiveEventBus.get()
+                .with(TestActivity.KEY_TEST_OBSERVE, String.class)
+                .postValueDelay("value_test_set_value", 500, TimeUnit.MILLISECONDS);
         Assert.assertNull(rule.getActivity().strResult);
         Thread.sleep(1000);
         Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");

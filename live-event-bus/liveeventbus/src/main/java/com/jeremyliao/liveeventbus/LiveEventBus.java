@@ -54,6 +54,8 @@ public final class LiveEventBus {
 
         void postValue(T value);
 
+        void postValueDelay(T value, long delay);
+
         void postValueDelay(T value, long delay, TimeUnit unit);
 
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
@@ -98,8 +100,13 @@ public final class LiveEventBus {
         }
 
         @Override
+        public void postValueDelay(T value, long delay) {
+            mainHandler.postDelayed(new PostValueTask(value), delay);
+        }
+
+        @Override
         public void postValueDelay(T value, long delay, TimeUnit unit) {
-            mainHandler.postDelayed(new PostValueTask(value), unit.convert(delay, unit));
+            postValueDelay(value, TimeUnit.MILLISECONDS.convert(delay, unit));
         }
 
         @Override
