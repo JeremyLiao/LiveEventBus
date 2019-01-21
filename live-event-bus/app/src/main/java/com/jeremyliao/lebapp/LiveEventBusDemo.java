@@ -1,4 +1,4 @@
-package com.jeremyliao.liveeventbus;
+package com.jeremyliao.lebapp;
 
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
@@ -9,7 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.jeremyliao.liveeventbus.databinding.ActivityLiveDataBusDemoBinding;
+import com.jeremyliao.lebapp.databinding.ActivityLiveDataBusDemoBinding;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.util.Random;
 import java.util.concurrent.ExecutorService;

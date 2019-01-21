@@ -1,1 +1,1 @@
-include ':liveeventbus'
+include ':app', ':liveeventbus'

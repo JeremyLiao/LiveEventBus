@@ -1,4 +1,4 @@
-package com.jeremyliao.liveeventbus.helper;
+package com.jeremyliao.lebapp.helper;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
 

@@ -5,7 +5,7 @@
 
         <variable
             name="handler"
-            type="com.jeremyliao.liveeventbus.LiveEventBusDemo" />
+            type="com.jeremyliao.lebapp.LiveEventBusDemo" />
     </data>
 
     <LinearLayout

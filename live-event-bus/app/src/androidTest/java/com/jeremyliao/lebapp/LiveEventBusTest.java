@@ -1,11 +1,12 @@
-package com.jeremyliao.liveeventbus;
+package com.jeremyliao.lebapp;
 
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.jeremyliao.liveeventbus.helper.LiveEventBusTestHelper;
+import com.jeremyliao.lebapp.helper.LiveEventBusTestHelper;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import org.junit.After;
 import org.junit.Assert;
