@@ -96,6 +96,15 @@ LiveEventBus.get()
         .removeObserver(observer);
 ```
 
+## 混淆规则
+
+```
+-dontwarn android.arch.lifecycle.LiveData
+-keep class android.arch.lifecycle.LiveData { *; }
+-keep class android.arch.lifecycle.LifecycleRegistry { *; }
+-keep class android.arch.core.internal.SafeIterableMap { *; }
+```
+
 ## 示例和DEMO
 - [x] 发送、接收消息
 - [x] Sticky模式
