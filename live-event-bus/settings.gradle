@@ -1,1 +1,6 @@
-include ':app', ':liveeventbus', ':liveeventbusclassic'
+include ':app'
+include ':app-v1'
+include ':app-v2'
+include ':liveeventbus-classic'
+include ':liveeventbus-v1'
+include ':liveeventbus-v2'
