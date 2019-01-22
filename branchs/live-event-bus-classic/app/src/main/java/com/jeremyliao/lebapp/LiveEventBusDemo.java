@@ -22,13 +22,13 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class LiveEventBusDemo extends AppCompatActivity {
+
     public static final String KEY_TEST_OBSERVE = "key_test_observe";
     public static final String KEY_TEST_OBSERVE_FOREVER = "key_test_observe_forever";
     public static final String KEY_TEST_STICKY = "key_test_sticky";
     public static final String KEY_TEST_MULTI_THREAD_POST = "key_test_multi_thread_post";
     public static final String KEY_TEST_MSG_SET_BEFORE_ON_CREATE = "key_test_msg_set_before_on_create";
     public static final String KEY_TEST_CLOSE_ALL_PAGE = "key_test_close_all_page";
-    public static final String KEY_TEST_ACTIVE_LEVEL = "key_test_active_level";
 
 
     private int sendCount = 0;
@@ -77,15 +77,6 @@ public class LiveEventBusDemo extends AppCompatActivity {
                     @Override
                     public void onChanged(@Nullable String s) {
                         receiveCount++;
-                    }
-                });
-        LiveEventBus.get()
-                .with(KEY_TEST_ACTIVE_LEVEL, String.class)
-                .observe(this, new Observer<String>() {
-                    @Override
-                    public void onChanged(@Nullable String s) {
-                        Toast.makeText(LiveEventBusDemo.this, "Receive message: " + s,
-                                Toast.LENGTH_SHORT).show();
                     }
                 });
         testMessageSetBeforeOnCreate();
@@ -229,9 +220,5 @@ public class LiveEventBusDemo extends AppCompatActivity {
 
     public void sendMessageSetBefore() {
         LiveEventBus.get().with(randomKey, String.class).setValue("msg set after");
-    }
-
-    public void testObserverActiveLevel() {
-        startActivity(new Intent(this, ObserverActiveLevelActivity.class));
     }
 }

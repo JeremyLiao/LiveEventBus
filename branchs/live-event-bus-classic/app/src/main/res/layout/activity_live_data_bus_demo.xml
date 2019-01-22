@@ -93,12 +93,5 @@
             android:onClick="@{()->handler.sendMessageSetBefore()}"
             android:text="发送的消息给之前动态注册的Observer" />
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:onClick="@{()->handler.testObserverActiveLevel()}"
-            android:text="测试Observer active level" />
-
     </LinearLayout>
 </layout>

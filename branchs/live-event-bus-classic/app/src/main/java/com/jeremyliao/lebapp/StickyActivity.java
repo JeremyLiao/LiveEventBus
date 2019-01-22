@@ -6,9 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.lebapp.databinding.ActivityStickyDemoBinding;
-
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 public class StickyActivity extends AppCompatActivity {
 

@@ -1,0 +1,2 @@
+include ':app-v2'
+include ':liveeventbus-v2'
