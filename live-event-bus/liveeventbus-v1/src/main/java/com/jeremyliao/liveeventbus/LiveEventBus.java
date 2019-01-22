@@ -3,8 +3,6 @@ package com.jeremyliao.liveeventbus;
 import android.arch.lifecycle.ExternalLiveData;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LifecycleRegistry;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,6 +33,8 @@ public final class LiveEventBus {
         return SingletonHolder.DEFAULT_BUS;
     }
 
+    private boolean lifecycleObserverAlwaysActive = true;
+
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new BusLiveData<>(key));
@@ -44,6 +44,10 @@ public final class LiveEventBus {
 
     public Observable<Object> with(String key) {
         return with(key, Object.class);
+    }
+
+    public void lifecycleObserverAlwaysActive(boolean active) {
+        lifecycleObserverAlwaysActive = active;
     }
 
     public interface Observable<T> {
@@ -67,7 +71,7 @@ public final class LiveEventBus {
         void removeObserver(@NonNull Observer<T> observer);
     }
 
-    private static class BusLiveData<T> extends ExternalLiveData<T> implements Observable<T> {
+    private class BusLiveData<T> extends ExternalLiveData<T> implements Observable<T> {
 
         private class PostValueTask implements Runnable {
             private Object newValue;
@@ -90,6 +94,11 @@ public final class LiveEventBus {
 
         private BusLiveData(String key) {
             this.key = key;
+        }
+
+        @Override
+        protected Lifecycle.State observerActiveLevel() {
+            return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
         }
 
         @Override

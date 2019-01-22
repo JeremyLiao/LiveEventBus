@@ -33,6 +33,8 @@ public final class LiveEventBus {
         return SingletonHolder.DEFAULT_BUS;
     }
 
+    private boolean lifecycleObserverAlwaysActive = true;
+
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new BusLiveEvent<>(key));
@@ -42,6 +44,10 @@ public final class LiveEventBus {
 
     public Observable<Object> with(String key) {
         return with(key, Object.class);
+    }
+
+    public void lifecycleObserverAlwaysActive(boolean active) {
+        lifecycleObserverAlwaysActive = active;
     }
 
     public interface Observable<T> {
@@ -64,7 +70,7 @@ public final class LiveEventBus {
         void removeObserver(@NonNull Observer<T> observer);
     }
 
-    private static class BusLiveEvent<T> extends LiveEvent<T> implements Observable<T> {
+    private class BusLiveEvent<T> extends LiveEvent<T> implements Observable<T> {
 
         private class PostValueTask implements Runnable {
             private Object newValue;
@@ -89,8 +95,7 @@ public final class LiveEventBus {
 
         @Override
         protected Lifecycle.State observerActiveLevel() {
-            return super.observerActiveLevel();
-//            return Lifecycle.State.STARTED;
+            return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
         }
 
         @Override
