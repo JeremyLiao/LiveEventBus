@@ -1,6 +1,6 @@
 # LiveEventBus  ![logo](/images/logo.svg)
 ### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.2.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.2.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 ## 简单之美
 [LiveEventBus](/live-event-bus/liveeventbus/src/main/java/com/jeremyliao/liveeventbus/LiveEventBus.java)实现非常简单，功能却非常强大。简单好用，就是最好的：）
@@ -16,7 +16,7 @@
 Via Gradle：
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.2.0'
+implementation 'com.jeremyliao:live-event-bus:1.2.1'
 ```
 
 ## 调用方式
