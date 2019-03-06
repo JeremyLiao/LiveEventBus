@@ -1,6 +1,9 @@
-# LiveEventBus  ![logo](/images/logo.svg)
-### Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.2.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+# LiveEventBus
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.2.2-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky
+
+![logo](/images/logo.png)
 
 ## 简单之美
 [LiveEventBus](/live-event-bus/liveeventbus/src/main/java/com/jeremyliao/liveeventbus/LiveEventBus.java)实现非常简单，功能却非常强大。简单好用，就是最好的：）
@@ -16,7 +19,7 @@
 Via Gradle：
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.2.1'
+implementation 'com.jeremyliao:live-event-bus:1.2.2'
 ```
 
 ## 调用方式
@@ -26,26 +29,26 @@ implementation 'com.jeremyliao:live-event-bus:1.2.1'
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.observe(this, new Observer<String>() {
-	    @Override
-	    public void onChanged(@Nullable String s) {
-	    }
-	});
+    .with("key_name", String.class)
+    .observe(this, new Observer<String>() {
+        @Override
+        public void onChanged(@Nullable String s) {
+        }
+    });
 ```
 - **observeForever**
 需要手动取消订阅
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.observeForever(observer);
+    .with("key_name", String.class)
+    .observeForever(observer);
 ```
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.removeObserver(observer);
+    .with("key_name", String.class)
+    .removeObserver(observer);
 ```
 
 #### 发送消息
