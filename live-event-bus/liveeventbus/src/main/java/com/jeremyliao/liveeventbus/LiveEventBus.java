@@ -118,12 +118,12 @@ public final class LiveEventBus {
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observe(owner, observer);
+            super.observe(owner, new SafeCastObserver<>(observer));
         }
 
         @Override
         public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observeSticky(owner, observer);
+            super.observeSticky(owner, new SafeCastObserver<>(observer));
         }
 
         @Override
@@ -155,19 +155,22 @@ public final class LiveEventBus {
 
     private static class ObserverWrapper<T> implements Observer<T> {
 
-        private Observer<T> observer;
+        @NonNull
+        private final Observer<T> observer;
 
-        public ObserverWrapper(Observer<T> observer) {
+        ObserverWrapper(@NonNull Observer<T> observer) {
             this.observer = observer;
         }
 
         @Override
         public void onChanged(@Nullable T t) {
-            if (observer != null) {
-                if (isCallOnObserve()) {
-                    return;
-                }
+            if (isCallOnObserve()) {
+                return;
+            }
+            try {
                 observer.onChanged(t);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
             }
         }
 
@@ -182,6 +185,25 @@ public final class LiveEventBus {
                 }
             }
             return false;
+        }
+    }
+
+    private static class SafeCastObserver<T> implements Observer<T> {
+
+        @NonNull
+        private final Observer<T> observer;
+
+        SafeCastObserver(@NonNull Observer<T> observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void onChanged(@Nullable T t) {
+            try {
+                observer.onChanged(t);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
