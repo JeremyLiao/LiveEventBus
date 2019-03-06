@@ -321,4 +321,58 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         Assert.assertTrue(LiveEventBusTestHelper.getLiveEventBusCount() == 0);
     }
+
+    @Test
+    public void testSendWrongTypeMsg() throws Exception {
+        final String key = "key_send_wrong_type";
+        rule.getActivity().strResult = "null";
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus.get()
+                        .with(key, String.class)
+                        .observe(rule.getActivity(), new Observer<String>() {
+                            @Override
+                            public void onChanged(@Nullable String s) {
+                                rule.getActivity().strResult = s;
+                            }
+                        });
+                LiveEventBus.get().with(key, Integer.class).setValue(10);
+
+            }
+        });
+        Thread.sleep(500);
+        Assert.assertEquals(rule.getActivity().strResult, "null");
+    }
+
+    @Test
+    public void testSendWrongTypeMsgToObserverForever() throws Exception {
+        final String key = "key_send_wrong_type_forever";
+        rule.getActivity().strResult = "null";
+        final Observer<String> observer = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                rule.getActivity().strResult = s;
+            }
+        };
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus.get()
+                        .with(key, String.class)
+                        .observeForever(observer);
+                LiveEventBus.get().with(key, Integer.class).setValue(10);
+            }
+        });
+        Thread.sleep(500);
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus.get()
+                        .with(key, String.class)
+                        .removeObserver(observer);
+            }
+        });
+        Assert.assertEquals(rule.getActivity().strResult, "null");
+    }
 }

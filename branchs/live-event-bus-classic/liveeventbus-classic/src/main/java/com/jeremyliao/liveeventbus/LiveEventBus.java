@@ -111,6 +111,7 @@ public final class LiveEventBus {
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
+            SafeCastObserver<T> safeCastObserver = new SafeCastObserver<>(observer);
             //保存LifecycleOwner的当前状态
             Lifecycle lifecycle = owner.getLifecycle();
             Lifecycle.State currentState = lifecycle.getCurrentState();
@@ -122,21 +123,21 @@ public final class LiveEventBus {
                 //set observerSize to -1，否则super.observe(owner, observer)的时候会无限循环
                 setLifecycleObserverMapSize(lifecycle, -1);
             }
-            super.observe(owner, observer);
+            super.observe(owner, safeCastObserver);
             if (needChangeState) {
                 //重置LifecycleOwner的状态
                 setLifecycleState(lifecycle, currentState);
                 //重置observer size，因为又添加了一个observer，所以数量+1
                 setLifecycleObserverMapSize(lifecycle, observerSize + 1);
                 //把Observer置为active
-                hookObserverActive(observer, true);
+                hookObserverActive(safeCastObserver, true);
             }
             //更改Observer的version
-            hookObserverVersion(observer);
+            hookObserverVersion(safeCastObserver);
         }
 
         public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observe(owner, observer);
+            super.observe(owner, new SafeCastObserver<>(observer));
         }
 
         @Override
@@ -277,19 +278,22 @@ public final class LiveEventBus {
 
     private static class ObserverWrapper<T> implements Observer<T> {
 
-        private Observer<T> observer;
+        @NonNull
+        private final Observer<T> observer;
 
-        public ObserverWrapper(Observer<T> observer) {
+        ObserverWrapper(@NonNull Observer<T> observer) {
             this.observer = observer;
         }
 
         @Override
         public void onChanged(@Nullable T t) {
-            if (observer != null) {
-                if (isCallOnObserve()) {
-                    return;
-                }
+            if (isCallOnObserve()) {
+                return;
+            }
+            try {
                 observer.onChanged(t);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
             }
         }
 
@@ -304,6 +308,25 @@ public final class LiveEventBus {
                 }
             }
             return false;
+        }
+    }
+
+    private static class SafeCastObserver<T> implements Observer<T> {
+
+        @NonNull
+        private final Observer<T> observer;
+
+        SafeCastObserver(@NonNull Observer<T> observer) {
+            this.observer = observer;
+        }
+
+        @Override
+        public void onChanged(@Nullable T t) {
+            try {
+                observer.onChanged(t);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
