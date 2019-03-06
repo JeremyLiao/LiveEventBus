@@ -83,7 +83,11 @@ public abstract class LiveEvent<T> {
         }
         observer.mLastVersion = mVersion;
         //noinspection unchecked
-        observer.mObserver.onChanged((T) mData);
+        try {
+            observer.mObserver.onChanged((T) mData);
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+        }
     }
 
     private void dispatchingValue(@Nullable ObserverWrapper initiator) {
