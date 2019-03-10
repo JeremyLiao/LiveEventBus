@@ -193,13 +193,13 @@ public final class LiveEventBus {
 
     }
 
-    public static <T> ObserverWrapper createForeverObserver(Observer<T> observer) {
-        return new ObserverWrapper(observer, "android.arch.lifecycle.LiveData",
+    private static <T> ObserverWrapper createForeverObserver(Observer<T> observer) {
+        return new ObserverWrapper<>(observer, "android.arch.lifecycle.LiveData",
                 "observeForever");
     }
 
-    public static <T> ObserverWrapper createStateObserver(Observer<T> observer) {
-        return new ObserverWrapper(observer, "android.arch.lifecycle.LiveData$LifecycleBoundObserver",
+    private static <T> ObserverWrapper createStateObserver(Observer<T> observer) {
+        return new ObserverWrapper<>(observer, "android.arch.lifecycle.LiveData$LifecycleBoundObserver",
                 "onStateChanged");
     }
 
