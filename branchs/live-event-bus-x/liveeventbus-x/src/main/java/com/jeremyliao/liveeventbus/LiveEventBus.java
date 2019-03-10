@@ -119,7 +119,7 @@ public final class LiveEventBus {
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
-            super.observe(owner, new SafeCastObserver<>(observer));
+            super.observe(owner, createStateObserver(observer));
         }
 
         @Override
@@ -130,7 +130,7 @@ public final class LiveEventBus {
         @Override
         public void observeForever(@NonNull Observer<? super T> observer) {
             if (!observerMap.containsKey(observer)) {
-                observerMap.put(observer, new ObserverWrapper(observer));
+                observerMap.put(observer, createForeverObserver(observer));
             }
             super.observeForever(observerMap.get(observer));
         }
@@ -159,13 +159,21 @@ public final class LiveEventBus {
         @NonNull
         private final Observer<T> observer;
 
-        ObserverWrapper(@NonNull Observer<T> observer) {
+        @NonNull
+        private final String filterClass;
+
+        @NonNull
+        private final String filterMethod;
+
+        ObserverWrapper(@NonNull Observer<T> observer, @NonNull String filterClass, @NonNull String filterMethod) {
             this.observer = observer;
+            this.filterClass = filterClass;
+            this.filterMethod = filterMethod;
         }
 
         @Override
         public void onChanged(@Nullable T t) {
-            if (isCallOnObserve()) {
+            if (isFilterChanged()) {
                 return;
             }
             try {
@@ -175,18 +183,28 @@ public final class LiveEventBus {
             }
         }
 
-        private boolean isCallOnObserve() {
+        private boolean isFilterChanged() {
             StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
             if (stackTrace != null && stackTrace.length > 0) {
                 for (StackTraceElement element : stackTrace) {
-                    if ("androidx.lifecycle.LiveData".equals(element.getClassName()) &&
-                            "observeForever".equals(element.getMethodName())) {
+                    if (filterClass.equals(element.getClassName()) &&
+                            filterMethod.equals(element.getMethodName())) {
                         return true;
                     }
                 }
             }
             return false;
         }
+    }
+
+    private static <T> ObserverWrapper createForeverObserver(Observer<T> observer) {
+        return new ObserverWrapper<>(observer, "androidx.lifecycle.LiveData",
+                "observeForever");
+    }
+
+    private static <T> ObserverWrapper createStateObserver(Observer<T> observer) {
+        return new ObserverWrapper<>(observer, "androidx.lifecycle.LiveData$LifecycleBoundObserver",
+                "onStateChanged");
     }
 
     private static class SafeCastObserver<T> implements Observer<T> {

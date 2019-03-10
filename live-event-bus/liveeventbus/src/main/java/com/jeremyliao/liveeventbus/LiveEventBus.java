@@ -157,10 +157,14 @@ public final class LiveEventBus {
 
         @NonNull
         private final Observer<T> observer;
+
+        @NonNull
         private final String filterClass;
+
+        @NonNull
         private final String filterMethod;
 
-        ObserverWrapper(@NonNull Observer<T> observer, String filterClass, String filterMethod) {
+        ObserverWrapper(@NonNull Observer<T> observer, @NonNull String filterClass, @NonNull String filterMethod) {
             this.observer = observer;
             this.filterClass = filterClass;
             this.filterMethod = filterMethod;
