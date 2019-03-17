@@ -23,7 +23,7 @@ implementation 'com.jeremyliao:live-event-bus:1.2.3'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.2.3'
+implementation 'com.jeremyliao:live-event-bus-x:1.2.4'
 ```
 
 ## 调用方式
