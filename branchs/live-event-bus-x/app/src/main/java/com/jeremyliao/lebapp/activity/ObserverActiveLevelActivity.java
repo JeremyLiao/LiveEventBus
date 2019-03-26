@@ -1,7 +1,9 @@
-package com.jeremyliao.lebapp;
+package com.jeremyliao.lebapp.activity;
 
 import android.os.Bundle;
 
+import com.jeremyliao.lebapp.LiveEventBusDemo;
+import com.jeremyliao.lebapp.R;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.lebapp.databinding.ActivityObserverActiveLevelDemoBinding;
 

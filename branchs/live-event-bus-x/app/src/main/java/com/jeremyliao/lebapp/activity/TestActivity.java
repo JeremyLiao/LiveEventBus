@@ -1,4 +1,4 @@
-package com.jeremyliao.lebapp;
+package com.jeremyliao.lebapp.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
