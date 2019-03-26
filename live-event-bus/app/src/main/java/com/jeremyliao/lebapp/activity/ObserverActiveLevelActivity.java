@@ -1,9 +1,11 @@
-package com.jeremyliao.lebapp;
+package com.jeremyliao.lebapp.activity;
 
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
+import com.jeremyliao.lebapp.LiveEventBusDemo;
+import com.jeremyliao.lebapp.R;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.lebapp.databinding.ActivityObserverActiveLevelDemoBinding;
 

@@ -9,7 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
+import com.jeremyliao.lebapp.activity.ObserverActiveLevelActivity;
+import com.jeremyliao.lebapp.activity.StickyActivity;
 import com.jeremyliao.lebapp.databinding.ActivityLiveDataBusDemoBinding;
+import com.jeremyliao.lebapp.service.IpcService;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.util.Random;
@@ -29,6 +32,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     public static final String KEY_TEST_MSG_SET_BEFORE_ON_CREATE = "key_test_msg_set_before_on_create";
     public static final String KEY_TEST_CLOSE_ALL_PAGE = "key_test_close_all_page";
     public static final String KEY_TEST_ACTIVE_LEVEL = "key_test_active_level";
+    public static final String KEY_TEST_BROADCAST = "key_test_broadcast";
 
 
     private int sendCount = 0;
@@ -47,6 +51,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startService(new Intent(this, IpcService.class));
         binding = DataBindingUtil.setContentView(this, R.layout.activity_live_data_bus_demo);
         binding.setHandler(this);
         binding.setLifecycleOwner(this);
@@ -233,5 +238,11 @@ public class LiveEventBusDemo extends AppCompatActivity {
 
     public void testObserverActiveLevel() {
         startActivity(new Intent(this, ObserverActiveLevelActivity.class));
+    }
+
+    public void testBroadcast() {
+        LiveEventBus.get()
+                .with(KEY_TEST_BROADCAST)
+                .broadcastValue("broadcast msg");
     }
 }

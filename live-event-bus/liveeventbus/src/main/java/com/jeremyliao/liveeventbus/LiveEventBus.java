@@ -4,10 +4,19 @@ import android.arch.lifecycle.ExternalLiveData;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import com.jeremyliao.liveeventbus.ipc.IpcConst;
+import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
+import com.jeremyliao.liveeventbus.ipc.encode.ValueEncoder;
+import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
+import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +42,11 @@ public final class LiveEventBus {
         return SingletonHolder.DEFAULT_BUS;
     }
 
+    private Context appContext;
     private boolean lifecycleObserverAlwaysActive = true;
+    private IEncoder encoder = new ValueEncoder();
+    private Config config = new Config();
+    private LebIpcReceiver receiver = new LebIpcReceiver();
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
@@ -46,8 +59,51 @@ public final class LiveEventBus {
         return with(key, Object.class);
     }
 
-    public void lifecycleObserverAlwaysActive(boolean active) {
-        lifecycleObserverAlwaysActive = active;
+    /**
+     * use the inner class Config to set params
+     * first of all, call initConfig to get the Config instance
+     * then, call the method of Config to initConfig LiveEventBus
+     * call this method in Application.onCreate
+     */
+
+    public Config initConfig() {
+        return config;
+    }
+
+    public class Config {
+
+        /**
+         * lifecycleObserverAlwaysActive
+         * set if then observer can always receive message
+         * true: observer can always receive message
+         * false: observer can only receive message when resumed
+         *
+         * @param active
+         * @return
+         */
+        public Config lifecycleObserverAlwaysActive(boolean active) {
+            lifecycleObserverAlwaysActive = active;
+            return this;
+        }
+
+        /**
+         * config broadcast
+         * only if you called this method, you can use broadcastValue() to send broadcast message
+         *
+         * @param context
+         * @return
+         */
+        public Config allowBroadcast(Context context) {
+            if (context != null) {
+                appContext = context.getApplicationContext();
+            }
+            if (appContext != null) {
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(IpcConst.ACTION);
+                appContext.registerReceiver(receiver, intentFilter);
+            }
+            return this;
+        }
     }
 
     public interface Observable<T> {
@@ -55,6 +111,8 @@ public final class LiveEventBus {
         void setValue(T value);
 
         void postValue(T value);
+
+        void broadcastValue(T value);
 
         void postValueDelay(T value, long delay);
 
@@ -104,6 +162,39 @@ public final class LiveEventBus {
         @Override
         public void postValue(T value) {
             mainHandler.post(new PostValueTask(value));
+        }
+
+        @Override
+        public void broadcastValue(final T value) {
+            if (appContext != null) {
+                if (ThreadUtils.isMainThread()) {
+                    broadcastValueInternal(value);
+                } else {
+                    mainHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            broadcastValue(value);
+                        }
+                    });
+                }
+            } else {
+                if (ThreadUtils.isMainThread()) {
+                    setValue(value);
+                } else {
+                    postValue(value);
+                }
+            }
+        }
+
+        private void broadcastValueInternal(T value) {
+            Intent intent = new Intent(IpcConst.ACTION);
+            intent.putExtra(IpcConst.KEY, key);
+            try {
+                encoder.encode(intent, value);
+                appContext.sendBroadcast(intent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         @Override

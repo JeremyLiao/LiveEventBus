@@ -1,1 +1,2 @@
-<manifest package="com.jeremyliao.liveeventbus" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jeremyliao.liveeventbus" />

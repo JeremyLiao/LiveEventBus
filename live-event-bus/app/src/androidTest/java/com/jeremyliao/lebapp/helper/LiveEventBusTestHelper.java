@@ -1,5 +1,7 @@
 package com.jeremyliao.lebapp.helper;
 
+import android.content.Context;
+
 import com.jeremyliao.liveeventbus.LiveEventBus;
 
 import java.lang.reflect.Field;
@@ -23,5 +25,24 @@ public class LiveEventBusTestHelper {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    public static Object getObject(String name) {
+        try {
+            Field field = LiveEventBus.class.getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(LiveEventBus.get());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Context getAppContext() {
+        return (Context) getObject("appContext");
+    }
+
+    public static boolean getLifecycleObserverAlwaysActive() {
+        return (boolean) getObject("lifecycleObserverAlwaysActive");
     }
 }
