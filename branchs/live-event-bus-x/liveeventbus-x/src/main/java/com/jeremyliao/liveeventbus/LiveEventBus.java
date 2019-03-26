@@ -62,12 +62,12 @@ public final class LiveEventBus {
 
     /**
      * use the inner class Config to set params
-     * first of all, call initConfig to get the Config instance
-     * then, call the method of Config to initConfig LiveEventBus
+     * first of all, call config to get the Config instance
+     * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
      */
 
-    public Config initConfig() {
+    public Config config() {
         return config;
     }
 
@@ -94,7 +94,7 @@ public final class LiveEventBus {
          * @param context
          * @return
          */
-        public Config allowBroadcast(Context context) {
+        public Config supportBroadcast(Context context) {
             if (context != null) {
                 appContext = context.getApplicationContext();
             }

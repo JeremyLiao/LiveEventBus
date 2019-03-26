@@ -13,8 +13,8 @@ public class DemoApplication extends Application {
     public void onCreate() {
         super.onCreate();
         LiveEventBus.get()
-                .initConfig()
-                .allowBroadcast(this)
+                .config()
+                .supportBroadcast(this)
                 .lifecycleObserverAlwaysActive(true);
     }
 }
