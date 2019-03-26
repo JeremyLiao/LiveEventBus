@@ -1,16 +1,16 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.2.3-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.3.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
-LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
 ![logo](/images/logo.png)
-
-## 简单之美
-[LiveEventBus](/live-event-bus/liveeventbus/src/main/java/com/jeremyliao/liveeventbus/LiveEventBus.java)实现非常简单，功能却非常强大。简单好用，就是最好的：）
 
 ## LiveEventBus的特点
 - [x] 生命周期感知，消息随时订阅，自动取消订阅
 - [x] 支持Sticky粘性消息
+- [x] 支持AndroidX
+- [x] 支持单APP跨进程通信
+- [x] 支持跨APP通信
 - [x] 支持设置LifecycleObserver（如Activity）接收消息的模式：
 1. 整个生命周期（从onCreate到onDestroy）都可以实时收到消息
 2. 激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
@@ -19,12 +19,31 @@ LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期�
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.2.3'
+implementation 'com.jeremyliao:live-event-bus:1.3.0'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.2.4'
+implementation 'com.jeremyliao:live-event-bus-x:1.3.0'
 ```
+
+## 配置
+在Application.onCreate方法中配置：
+
+```
+LiveEventBus.get()
+        .config()
+        .supportBroadcast(this)
+        .lifecycleObserverAlwaysActive(true);
+```
+- **supportBroadcast**
+
+配置支持跨进程、跨APP通信
+
+- **lifecycleObserverAlwaysActive**
+
+配置LifecycleObserver（如Activity）接收消息的模式：
+1. true：整个生命周期（从onCreate到onDestroy）都可以实时收到消息
+2. false：激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
 
 ## 调用方式
 #### 订阅消息
@@ -33,26 +52,26 @@ implementation 'com.jeremyliao:live-event-bus-x:1.2.4'
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.observe(this, new Observer<String>() {
-	    @Override
-	    public void onChanged(@Nullable String s) {
-	    }
-	});
+    .with("key_name", String.class)
+    .observe(this, new Observer<String>() {
+        @Override
+        public void onChanged(@Nullable String s) {
+        }
+    });
 ```
 - **observeForever**
 需要手动取消订阅
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.observeForever(observer);
+    .with("key_name", String.class)
+    .observeForever(observer);
 ```
 
 ```java
 LiveEventBus.get()
-	.with("key_name", String.class)
-	.removeObserver(observer);
+    .with("key_name", String.class)
+    .removeObserver(observer);
 ```
 
 #### 发送消息
@@ -66,6 +85,16 @@ LiveEventBus.get().with("key_name").setValue(value);
 ```java
 LiveEventBus.get().with("key_name").postValue(value);
 ```
+
+#### 跨进程、跨APP发送消息
+- **broadcastValue**
+```java
+LiveEventBus.get()
+        .with(KEY_TEST_BROADCAST)
+        .broadcastValue("broadcast msg");
+```
+需要设置supportBroadcast
+
 #### Sticky模式
 支持在注册订阅者的时候设置Sticky模式，这样订阅者可以接收到订阅之前发送的消息
 
@@ -96,19 +125,6 @@ LiveEventBus.get()
         .removeObserver(observer);
 ```
 
-#### 设置LifecycleObserver接收消息的模式
-- [x] 整个生命周期（从onCreate到onDestroy）都可以实时收到消息（LiveEventBus的默认设置）
-
-```java
-LiveEventBus.get().lifecycleObserverAlwaysActive(true);
-```
-
-- [x] 激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
-
-```java
-LiveEventBus.get().lifecycleObserverAlwaysActive(false);
-```
-
 ## 混淆规则
 
 ```
@@ -117,48 +133,42 @@ LiveEventBus.get().lifecycleObserverAlwaysActive(false);
 -keep class android.arch.lifecycle.ExternalLiveData { *; }
 ```
 
-## 其他版本
-#### [classic](/branchs/live-event-bus-classic/liveeventbus-classic/src/main/java/com/jeremyliao/liveeventbus/LiveEventBus.java)
-- [x] 经典实现版，整个实现就一个java文件
-- [x] 只支持激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
-
-#### [v2](/branchs/live-event-bus-v2/liveeventbus-v2/src/main/java/com/jeremyliao/liveeventbus)
-- [x] v2版，所有特性同master版保持一致
-- [x] 为了解决非激活态不能实时收到消息的问题，采用修改LiveData源码的方式实现，master版采用继承LiveData的方式实现
-
+## 其他分支版本
 #### [AndroidX](/branchs/live-event-bus-x/liveeventbus-x/src/main/java/com/jeremyliao/liveeventbus)
 - [x] 支持AndroidX
 - [x] 同master版本一致
 
-## 示例和DEMO
-- [x] 发送、接收消息
-- [x] Sticky模式
+#### [classic](/branchs/live-event-bus-classic/liveeventbus-classic/src/main/java/com/jeremyliao/liveeventbus/LiveEventBus.java)
+- [x] 经典实现版，整个实现就一个java文件
+- [x] 只支持激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
+- [x] 不支持跨进程通信
 
-![基本功能](/images/img1.gif)
-![sticky](/images/img2.gif)
+#### [v2](/branchs/live-event-bus-v2/liveeventbus-v2/src/main/java/com/jeremyliao/liveeventbus)
+- [x] v2版，历史版本，已废弃
+- [x] 为了解决非激活态不能实时收到消息的问题，采用修改LiveData源码的方式实现
 
-- [x] 任何时候都可以订阅消息
-- [x] 一个简单的应用场景，发消息关闭所有Activity
-
-![register](/images/img3.gif)
-![close all](/images/img4.gif)
-
-- [x] 快速postValue也不会丢失消息
-- [x] 整个生命周期（从onCreate到onDestroy）都可以实时收到消息
-
-![postvalue](/images/img5.gif)
-![always](/images/img6.gif)
+## [示例和DEMO](DEMO.md)
 
 ## 文档
-#### LiveEventBus实现原理
-LiveEventBus的实现原理可参见作者在美团技术博客上的博文：
+#### 实现原理
+- LiveEventBus的实现原理可参见作者在美团技术博客上的博文：
 [Android消息总线的演进之路：用LiveDataBus替代RxBus、EventBus](https://tech.meituan.com/Android_LiveDataBus.html)
+- 该博文是初版LiveEventBus的实现原理，与当前版本的实现可能不一致，仅供参考
 
 ## 质量
-- [x] 编写了19个测试用例以确保LiveEventBus能够正常运行。
+- [x] 编写了30个测试用例以确保LiveEventBus能够正常运行。
 - [x] 具体测试用例参见[LiveEventBusTest](/live-event-bus/app/src/androidTest/java/com/jeremyliao/lebapp/LiveEventBusTest.java)
 
-## 主要功能Commit记录
+## 版本
+
+版本 | 功能
+---|---
+1.3.x | 支持跨进程、跨APP通信
+1.2.x | 支持接收消息的模式，支持AndroidX
+1.1.x | 修复了一些问题
+1.0.x | 初版，支持基本功能
+
+## 主要功能提交记录
 1. 主要功能完成（Jul 11, 2018）
 2. 支持Sticky（Aug 8, 2018）
 3. 修复在后台线程PostValue会丢失消息的问题（Aug 9, 2018）
@@ -167,6 +177,7 @@ LiveEventBus的实现原理可参见作者在美团技术博客上的博文：
 6. 在removeObserver的时候，检查livedata上有没有observer，没有则删除这个livadata，以减少内存占用。特别感谢@GreenhairTurtle提供的解决方案（Dec 27，2018）
 7. 支持设置LifecycleObserver接收消息的模式，支持在整个生命周期实时接收消息和只在激活态实时接收消息两种模式（Jan 22，2019）
 8. 支持AndroidX（Mar 8，2019）
+9. 支持跨进程、跨APP（Mar 26，2019）
 
 ## 其他
 - 欢迎提Issue与作者交流
