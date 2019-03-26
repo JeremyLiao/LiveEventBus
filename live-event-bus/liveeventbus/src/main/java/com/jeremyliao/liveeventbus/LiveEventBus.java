@@ -209,7 +209,7 @@ public final class LiveEventBus {
 
         @Override
         public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observe(owner, createStateObserver(observer));
+            super.observe(owner, new SafeCastObserver<>(observer));
         }
 
         @Override
@@ -291,11 +291,6 @@ public final class LiveEventBus {
     private static <T> ObserverWrapper createForeverObserver(Observer<T> observer) {
         return new ObserverWrapper<>(observer, "android.arch.lifecycle.LiveData",
                 "observeForever");
-    }
-
-    private static <T> ObserverWrapper createStateObserver(Observer<T> observer) {
-        return new ObserverWrapper<>(observer, "android.arch.lifecycle.LiveData$LifecycleBoundObserver",
-                "onStateChanged");
     }
 
     private static class SafeCastObserver<T> implements Observer<T> {
