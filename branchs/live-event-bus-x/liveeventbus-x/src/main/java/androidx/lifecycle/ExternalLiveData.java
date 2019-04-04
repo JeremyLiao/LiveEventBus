@@ -14,6 +14,8 @@ import static androidx.lifecycle.Lifecycle.State.DESTROYED;
  */
 public class ExternalLiveData<T> extends MutableLiveData<T> {
 
+    public static final int START_VERSION = LiveData.START_VERSION;
+
     @Override
     public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<? super T> observer) {
         if (owner.getLifecycle().getCurrentState() == DESTROYED) {
@@ -23,11 +25,8 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
         try {
             //use ExternalLifecycleBoundObserver instead of LifecycleBoundObserver
             LifecycleBoundObserver wrapper = new ExternalLifecycleBoundObserver(owner, observer);
-            wrapper.mLastVersion = getVersion();
-            //Replace "ObserverWrapper existing = mObservers.putIfAbsent(observer, wrapper);"
-            Object existing = callMethodPutIfAbsent(observer, wrapper);
-            //Replace "if (existing != null && !existing.isAttachedTo(owner)) {"
-            if (existing != null && !callMethodIsAttachedTo(existing, owner)) {
+            LifecycleBoundObserver existing = (LifecycleBoundObserver) callMethodPutIfAbsent(observer, wrapper);
+            if (existing != null && !existing.isAttachedTo(owner)) {
                 throw new IllegalArgumentException("Cannot add the same observer"
                         + " with different lifecycles");
             }
@@ -40,8 +39,8 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
         }
     }
 
-    public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-        super.observe(owner, observer);
+    public int getVersion() {
+        return super.getVersion();
     }
 
     /**
@@ -51,7 +50,7 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
      * you can change this value to CREATED/STARTED/RESUMED
      * determine on witch state, you can receive message
      *
-     * @return
+     * @return Lifecycle.State
      */
     protected Lifecycle.State observerActiveLevel() {
         return CREATED;
@@ -59,7 +58,7 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
 
     class ExternalLifecycleBoundObserver extends LifecycleBoundObserver {
 
-        public ExternalLifecycleBoundObserver(@NonNull LifecycleOwner owner, Observer<? super T> observer) {
+        ExternalLifecycleBoundObserver(@NonNull LifecycleOwner owner, Observer<? super T> observer) {
             super(owner, observer);
         }
 
@@ -72,8 +71,7 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
     private Object getFieldObservers() throws Exception {
         Field fieldObservers = LiveData.class.getDeclaredField("mObservers");
         fieldObservers.setAccessible(true);
-        Object objectObservers = fieldObservers.get(this);
-        return objectObservers;
+        return fieldObservers.get(this);
     }
 
     private Object callMethodPutIfAbsent(Object observer, Object wrapper) throws Exception {
@@ -83,12 +81,5 @@ public class ExternalLiveData<T> extends MutableLiveData<T> {
                 Object.class, Object.class);
         putIfAbsent.setAccessible(true);
         return putIfAbsent.invoke(mObservers, observer, wrapper);
-    }
-
-    private boolean callMethodIsAttachedTo(Object caller, Object owner) throws Exception {
-        Class<?> type = caller.getClass().getSuperclass();
-        Method isAttachedTo = type.getDeclaredMethod("isAttachedTo", LifecycleOwner.class);
-        isAttachedTo.setAccessible(true);
-        return (boolean) isAttachedTo.invoke(caller, owner);
     }
 }

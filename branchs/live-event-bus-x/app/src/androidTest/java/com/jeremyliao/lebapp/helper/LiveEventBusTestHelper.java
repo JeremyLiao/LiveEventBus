@@ -38,6 +38,18 @@ public class LiveEventBusTestHelper {
         }
     }
 
+    public static Object getLiveEventField(String name, Object target) {
+        try {
+            Class<?> targetClass = target.getClass();
+            Field field = targetClass.getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(target);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static Context getAppContext() {
         return (Context) getObject("appContext");
     }

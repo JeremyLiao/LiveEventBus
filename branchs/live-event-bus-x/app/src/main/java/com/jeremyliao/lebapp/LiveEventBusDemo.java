@@ -98,7 +98,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
 
     private void testMessageSetBeforeOnCreate() {
         //先发出一个消息
-        LiveEventBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).setValue("msg set before");
+        LiveEventBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).post("msg set before");
         //然后订阅这个消息
         LiveEventBus.get()
                 .with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
@@ -118,22 +118,6 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 .removeObserver(observer);
     }
 
-    public void sendMsgBySetValue() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message By SetValue: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveEventBus.get().with(KEY_TEST_OBSERVE).setValue(s);
-                    }
-                });
-    }
-
     public void sendMsgByPostValue() {
         Observable.just(new Random())
                 .map(new Func1<Random, String>() {
@@ -146,7 +130,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        LiveEventBus.get().with(KEY_TEST_OBSERVE).postValue(s);
+                        LiveEventBus.get().with(KEY_TEST_OBSERVE).post(s);
                     }
                 });
     }
@@ -162,7 +146,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        LiveEventBus.get().with(KEY_TEST_OBSERVE_FOREVER).setValue(s);
+                        LiveEventBus.get().with(KEY_TEST_OBSERVE_FOREVER).post(s);
                     }
                 });
     }
@@ -178,7 +162,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 .subscribe(new Action1<String>() {
                     @Override
                     public void call(String s) {
-                        LiveEventBus.get().with(KEY_TEST_STICKY).setValue(s);
+                        LiveEventBus.get().with(KEY_TEST_STICKY).post(s);
                     }
                 });
     }
@@ -192,7 +176,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     }
 
     public void closeAll() {
-        LiveEventBus.get().with(KEY_TEST_CLOSE_ALL_PAGE).setValue(true);
+        LiveEventBus.get().with(KEY_TEST_CLOSE_ALL_PAGE).post(true);
     }
 
     public void postValueCountTest() {
@@ -203,7 +187,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
             threadPool.execute(new Runnable() {
                 @Override
                 public void run() {
-                    LiveEventBus.get().with(KEY_TEST_MULTI_THREAD_POST).postValue("test_data");
+                    LiveEventBus.get().with(KEY_TEST_MULTI_THREAD_POST).post("test_data");
                 }
             });
         }
@@ -220,7 +204,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
         //先动态生成一个key
         randomKey = "key_random_" + new Random().nextInt();
         //然后发出一个消息
-        LiveEventBus.get().with(randomKey, String.class).setValue("msg set before");
+        LiveEventBus.get().with(randomKey, String.class).post("msg set before");
         //然后订阅这个消息
         LiveEventBus.get()
                 .with(randomKey, String.class)
@@ -233,7 +217,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     }
 
     public void sendMessageSetBefore() {
-        LiveEventBus.get().with(randomKey, String.class).setValue("msg set after");
+        LiveEventBus.get().with(randomKey, String.class).post("msg set after");
     }
 
     public void testObserverActiveLevel() {
@@ -243,6 +227,6 @@ public class LiveEventBusDemo extends AppCompatActivity {
     public void testBroadcast() {
         LiveEventBus.get()
                 .with(KEY_TEST_BROADCAST)
-                .broadcastValue("broadcast msg");
+                .broadcast("broadcast msg");
     }
 }
