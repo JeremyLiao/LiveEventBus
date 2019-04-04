@@ -60,7 +60,7 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void testMessageSetBeforeOnCreate() {
-        LiveEventBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).setValue("msg_set_before");
+        LiveEventBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).post("msg_set_before");
         LiveEventBus.get()
                 .with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
                 .observe(this, new Observer<String>() {

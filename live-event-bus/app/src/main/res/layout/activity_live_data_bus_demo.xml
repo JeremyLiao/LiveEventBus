@@ -31,15 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:onClick="@{()->handler.sendMsgBySetValue()}"
-                android:text="用SetValue发送消息（主线程）" />
-
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
                 android:onClick="@{()->handler.sendMsgByPostValue()}"
-                android:text="用PostValue发送消息（后台线程发送，主线程接收）" />
+                android:text="发送消息" />
 
             <Button
                 android:layout_width="match_parent"

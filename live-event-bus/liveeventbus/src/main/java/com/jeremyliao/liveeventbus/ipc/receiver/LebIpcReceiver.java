@@ -27,7 +27,7 @@ public class LebIpcReceiver extends BroadcastReceiver {
                     LiveEventBus
                             .get()
                             .with(key)
-                            .setValue(value);
+                            .post(value);
                 }
             } catch (DecodeException e) {
                 e.printStackTrace();

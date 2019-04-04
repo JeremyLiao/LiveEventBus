@@ -1,5 +1,6 @@
 package com.jeremyliao.lebapp;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,13 +51,13 @@ public class LiveEventBusTest {
     }
 
     @Test
-    public void testSetValue() throws Exception {
+    public void testPostOnMainThread() throws Exception {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 LiveEventBus.get()
                         .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                        .setValue("value_test_set_value");
+                        .post("value_test_set_value");
             }
         });
         Thread.sleep(500);
@@ -63,10 +65,10 @@ public class LiveEventBusTest {
     }
 
     @Test
-    public void testPostValue() throws Exception {
+    public void testPostOnBackThread() throws Exception {
         LiveEventBus.get()
                 .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                .postValue("value_test_set_value");
+                .post("value_test_set_value");
         Thread.sleep(500);
         Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
     }
@@ -78,7 +80,7 @@ public class LiveEventBusTest {
             public void run() {
                 LiveEventBus.get()
                         .with(TestActivity.KEY_TEST_OBSERVE_FOREVER, String.class)
-                        .setValue("value_test_set_value_forever");
+                        .post("value_test_set_value_forever");
             }
         });
         Thread.sleep(500);
@@ -89,7 +91,7 @@ public class LiveEventBusTest {
     public void testPostValueToObserverForever() throws Exception {
         LiveEventBus.get()
                 .with(TestActivity.KEY_TEST_OBSERVE_FOREVER, String.class)
-                .postValue("value_test_post_value_forever");
+                .post("value_test_post_value_forever");
         Thread.sleep(500);
         Assert.assertEquals(rule.getActivity().strResult, "value_test_post_value_forever");
     }
@@ -104,7 +106,7 @@ public class LiveEventBusTest {
                 public void run() {
                     LiveEventBus.get()
                             .with(TestActivity.KEY_TEST_MULTI_THREAD_POST)
-                            .postValue("test_data");
+                            .post("test_data");
                 }
             });
         }
@@ -122,7 +124,7 @@ public class LiveEventBusTest {
     public void testSendMsgBeforeAndAfterObserveOnCreate() throws Exception {
         LiveEventBus.get()
                 .with(TestActivity.KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
-                .postValue("msg_set_after");
+                .post("msg_set_after");
         Thread.sleep(500);
         Assert.assertTrue(rule.getActivity().receiveMsgSetBeforeOnCreate);
         Assert.assertEquals(rule.getActivity().strResult, "msg_set_after");
@@ -135,7 +137,7 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observe(rule.getActivity(), new Observer<String>() {
@@ -157,7 +159,7 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observe(rule.getActivity(), new Observer<String>() {
@@ -166,7 +168,7 @@ public class LiveEventBusTest {
                                 rule.getActivity().strResult = s;
                             }
                         });
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_after");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_after");
             }
         });
         Thread.sleep(500);
@@ -179,7 +181,7 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observeSticky(rule.getActivity(), new Observer<String>() {
@@ -198,29 +200,8 @@ public class LiveEventBusTest {
     public void testPostValueDelay1000() throws Exception {
         LiveEventBus.get()
                 .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                .postValueDelay("value_test_set_value", 1000);
+                .postDelay("value_test_set_value", 1000);
         Thread.sleep(500);
-        Assert.assertNull(rule.getActivity().strResult);
-        Thread.sleep(1000);
-        Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
-    }
-
-    @Test
-    public void testPostValueDelay1s() throws Exception {
-        LiveEventBus.get()
-                .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                .postValueDelay("value_test_set_value", 1, TimeUnit.SECONDS);
-        Thread.sleep(500);
-        Assert.assertNull(rule.getActivity().strResult);
-        Thread.sleep(1000);
-        Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
-    }
-
-    @Test
-    public void testPostValueDelay500ms() throws Exception {
-        LiveEventBus.get()
-                .with(TestActivity.KEY_TEST_OBSERVE, String.class)
-                .postValueDelay("value_test_set_value", 500, TimeUnit.MILLISECONDS);
         Assert.assertNull(rule.getActivity().strResult);
         Thread.sleep(1000);
         Assert.assertEquals(rule.getActivity().strResult, "value_test_set_value");
@@ -239,7 +220,7 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observeForever(observer);
@@ -270,11 +251,11 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observeForever(observer);
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_after");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_after");
             }
         });
         Thread.sleep(500);
@@ -302,7 +283,7 @@ public class LiveEventBusTest {
         rule.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                LiveEventBus.get().with(randomKey, String.class).setValue("msg_set_before");
+                LiveEventBus.get().with(randomKey, String.class).post("msg_set_before");
                 LiveEventBus.get()
                         .with(randomKey, String.class)
                         .observeStickyForever(observer);
@@ -321,14 +302,6 @@ public class LiveEventBusTest {
     }
 
     @Test
-    public void testRemoveObserve() throws Exception {
-        Assert.assertTrue(LiveEventBusTestHelper.getLiveEventBusCount() > 0);
-        rule.getActivity().finish();
-        Thread.sleep(500);
-        Assert.assertTrue(LiveEventBusTestHelper.getLiveEventBusCount() == 0);
-    }
-
-    @Test
     public void testSendWrongTypeMsg() throws Exception {
         final String key = "key_send_wrong_type";
         rule.getActivity().strResult = "null";
@@ -343,7 +316,7 @@ public class LiveEventBusTest {
                                 rule.getActivity().strResult = s;
                             }
                         });
-                LiveEventBus.get().with(key, Integer.class).setValue(10);
+                LiveEventBus.get().with(key, Integer.class).post(10);
 
             }
         });
@@ -367,7 +340,7 @@ public class LiveEventBusTest {
                 LiveEventBus.get()
                         .with(key, String.class)
                         .observeForever(observer);
-                LiveEventBus.get().with(key, Integer.class).setValue(10);
+                LiveEventBus.get().with(key, Integer.class).post(10);
             }
         });
         Thread.sleep(500);
@@ -402,7 +375,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, String.class)
-                .broadcastValue("value_test_broadcast_value");
+                .broadcast("value_test_broadcast_value");
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget(), "value_test_broadcast_value");
     }
@@ -427,7 +400,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, Integer.class)
-                .broadcastValue(100);
+                .broadcast(100);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().intValue(), 100);
     }
@@ -452,7 +425,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, Boolean.class)
-                .broadcastValue(true);
+                .broadcast(true);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget(), true);
     }
@@ -477,7 +450,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, Long.class)
-                .broadcastValue(Long.valueOf(100));
+                .broadcast(Long.valueOf(100));
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget(), Long.valueOf(100));
     }
@@ -502,7 +475,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, Float.class)
-                .broadcastValue(Float.valueOf(100));
+                .broadcast(Float.valueOf(100));
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget(), Float.valueOf(100));
     }
@@ -527,7 +500,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus.get()
                 .with(key, SerializableObject.class)
-                .broadcastValue(new SerializableObject(100));
+                .broadcast(new SerializableObject(100));
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().getValue(), 100);
     }
@@ -554,7 +527,7 @@ public class LiveEventBusTest {
         bundle.putInt("key_test_int", 100);
         LiveEventBus.get()
                 .with(key, Bundle.class)
-                .broadcastValue(bundle);
+                .broadcast(bundle);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().getInt("key_test_int"), 100);
     }
@@ -580,7 +553,7 @@ public class LiveEventBusTest {
         GoodBean bean = new GoodBean(100, "hello");
         LiveEventBus.get()
                 .with(key, GoodBean.class)
-                .broadcastValue(bean);
+                .broadcast(bean);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().getIntValue(), 100);
         Assert.assertEquals(wrapper.getTarget().getStrValue(), "hello");
@@ -607,9 +580,52 @@ public class LiveEventBusTest {
         BadBean bean = new BadBean(100, "hello");
         LiveEventBus.get()
                 .with(key, BadBean.class)
-                .broadcastValue(bean);
+                .broadcast(bean);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().getIntValue(), 100);
         Assert.assertEquals(wrapper.getTarget().getStrValue(), "hello");
+    }
+
+    @Test
+    public void testRemoveObserve() throws Exception {
+        LiveEventBus.Observable<String> observe = LiveEventBus.get().with("key_test_remove_observe", String.class);
+        Map map = (Map) LiveEventBusTestHelper.getLiveEventField("observerMap", observe);
+        LiveData liveData = (LiveData) LiveEventBusTestHelper.getLiveEventField("liveData", observe);
+        Observer<String> observer = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+            }
+        };
+        observe.observeForever(observer);
+        Thread.sleep(500);
+        Assert.assertEquals(map.size(), 1);
+        Assert.assertTrue(liveData.hasActiveObservers());
+        Assert.assertTrue(liveData.hasObservers());
+        observe.removeObserver(observer);
+        Thread.sleep(500);
+        Assert.assertEquals(map.size(), 0);
+        Assert.assertFalse(liveData.hasActiveObservers());
+        Assert.assertFalse(liveData.hasObservers());
+    }
+
+    @Test
+    public void testAutoRemoveObserve() throws Exception {
+        LiveEventBus.Observable<String> observe = LiveEventBus.get().with("key_test_auto_remove_observe", String.class);
+        Map map = (Map) LiveEventBusTestHelper.getLiveEventField("observerMap", observe);
+        LiveData liveData = (LiveData) LiveEventBusTestHelper.getLiveEventField("liveData", observe);
+        observe.observe(rule.getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+            }
+        });
+        Thread.sleep(500);
+        Assert.assertEquals(map.size(), 0);
+        Assert.assertTrue(liveData.hasActiveObservers());
+        Assert.assertTrue(liveData.hasObservers());
+        rule.getActivity().finish();
+        Thread.sleep(500);
+        Assert.assertEquals(map.size(), 0);
+        Assert.assertFalse(liveData.hasActiveObservers());
+        Assert.assertFalse(liveData.hasObservers());
     }
 }

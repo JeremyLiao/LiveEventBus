@@ -3,12 +3,14 @@ package com.jeremyliao.liveeventbus;
 import android.arch.lifecycle.ExternalLiveData;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -28,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class LiveEventBus {
 
-    private final Map<String, BusLiveData<Object>> bus;
+    private final Map<String, LiveEvent<Object>> bus;
 
     private LiveEventBus() {
         bus = new HashMap<>();
@@ -50,7 +52,7 @@ public final class LiveEventBus {
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
-            bus.put(key, new BusLiveData<>(key));
+            bus.put(key, new LiveEvent<>(key));
         }
         return (Observable<T>) bus.get(key);
     }
@@ -108,85 +110,198 @@ public final class LiveEventBus {
 
     public interface Observable<T> {
 
-        void setValue(T value);
+        /**
+         * 发送一个消息，支持前台线程、后台线程发送
+         *
+         * @param value
+         */
+        void post(T value);
 
-        void postValue(T value);
+        /**
+         * 发送一个消息，支持前台线程、后台线程发送
+         * 需要跨进程、跨APP发送消息的时候调用该方法
+         *
+         * @param value
+         */
+        void broadcast(T value);
 
-        void broadcastValue(T value);
+        /**
+         * 延迟发送一个消息，支持前台线程、后台线程发送
+         *
+         * @param value
+         * @param delay 延迟毫秒数
+         */
+        void postDelay(T value, long delay);
 
-        void postValueDelay(T value, long delay);
-
-        void postValueDelay(T value, long delay, TimeUnit unit);
-
+        /**
+         * 注册一个Observer，生命周期感知，自动取消订阅
+         *
+         * @param owner
+         * @param observer
+         */
         void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
+        /**
+         * 注册一个Observer，生命周期感知，自动取消订阅
+         * 如果之前有消息发送，可以在注册时收到消息（消息同步）
+         *
+         * @param owner
+         * @param observer
+         */
         void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer);
 
+        /**
+         * 注册一个Observer
+         *
+         * @param observer
+         */
         void observeForever(@NonNull Observer<T> observer);
 
+        /**
+         * 注册一个Observer
+         * 如果之前有消息发送，可以在注册时收到消息（消息同步）
+         *
+         * @param observer
+         */
         void observeStickyForever(@NonNull Observer<T> observer);
 
+        /**
+         * 通过observeForever或observeStickyForever注册的，需要调用该方法取消订阅
+         *
+         * @param observer
+         */
         void removeObserver(@NonNull Observer<T> observer);
     }
 
-    private class BusLiveData<T> extends ExternalLiveData<T> implements Observable<T> {
-
-        private class PostValueTask implements Runnable {
-            private Object newValue;
-
-            public PostValueTask(@NonNull Object newValue) {
-                this.newValue = newValue;
-            }
-
-            @Override
-            public void run() {
-                setValue((T) newValue);
-            }
-        }
-
-        @NonNull
-        private final String key;
-        private Map<Observer, Observer> observerMap = new HashMap<>();
-        private Handler mainHandler = new Handler(Looper.getMainLooper());
-
-
-        private BusLiveData(String key) {
-            this.key = key;
-        }
-
+    private class LifecycleLiveData<T> extends ExternalLiveData<T> {
         @Override
         protected Lifecycle.State observerActiveLevel() {
             return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
         }
+    }
 
-        @Override
-        public void postValue(T value) {
-            mainHandler.post(new PostValueTask(value));
+    private class LiveEvent<T> implements Observable<T> {
+
+        @NonNull
+        private final String key;
+        private final LifecycleLiveData<T> liveData;
+        private final Map<Observer, ObserverWrapper<T>> observerMap = new HashMap<>();
+        private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        LiveEvent(@NonNull String key) {
+            this.key = key;
+            this.liveData = new LifecycleLiveData<>();
         }
 
         @Override
-        public void broadcastValue(final T value) {
+        public void post(T value) {
+            if (ThreadUtils.isMainThread()) {
+                postInternal(value);
+            } else {
+                mainHandler.post(new PostValueTask(value));
+            }
+        }
+
+        @Override
+        public void broadcast(final T value) {
             if (appContext != null) {
                 if (ThreadUtils.isMainThread()) {
-                    broadcastValueInternal(value);
+                    broadcastInternal(value);
                 } else {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            broadcastValue(value);
+                            broadcastInternal(value);
                         }
                     });
                 }
             } else {
-                if (ThreadUtils.isMainThread()) {
-                    setValue(value);
-                } else {
-                    postValue(value);
-                }
+                post(value);
             }
         }
 
-        private void broadcastValueInternal(T value) {
+        @Override
+        public void postDelay(T value, long delay) {
+            mainHandler.postDelayed(new PostValueTask(value), delay);
+        }
+
+        @Override
+        public void observe(@NonNull final LifecycleOwner owner, @NonNull final Observer<T> observer) {
+            if (ThreadUtils.isMainThread()) {
+                observeInternal(owner, observer);
+            } else {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        observeInternal(owner, observer);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void observeSticky(@NonNull final LifecycleOwner owner, @NonNull final Observer<T> observer) {
+            if (ThreadUtils.isMainThread()) {
+                observeStickyInternal(owner, observer);
+            } else {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        observeStickyInternal(owner, observer);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void observeForever(@NonNull final Observer<T> observer) {
+            if (ThreadUtils.isMainThread()) {
+                observeForeverInternal(observer);
+            } else {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        observeForeverInternal(observer);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void observeStickyForever(@NonNull final Observer<T> observer) {
+            if (ThreadUtils.isMainThread()) {
+                observeStickyForeverInternal(observer);
+            } else {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        observeStickyForeverInternal(observer);
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void removeObserver(@NonNull final Observer<T> observer) {
+            if (ThreadUtils.isMainThread()) {
+                removeObserverInternal(observer);
+            } else {
+                mainHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        removeObserverInternal(observer);
+                    }
+                });
+            }
+        }
+
+        @MainThread
+        private void postInternal(T value) {
+            liveData.setValue(value);
+        }
+
+        @MainThread
+        private void broadcastInternal(T value) {
             Intent intent = new Intent(IpcConst.ACTION);
             intent.putExtra(IpcConst.KEY, key);
             try {
@@ -197,49 +312,58 @@ public final class LiveEventBus {
             }
         }
 
-        @Override
-        public void postValueDelay(T value, long delay) {
-            mainHandler.postDelayed(new PostValueTask(value), delay);
+        @MainThread
+        private void observeInternal(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
+            ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
+            observerWrapper.preventNextEvent = liveData.getVersion() > ExternalLiveData.START_VERSION;
+            liveData.observe(owner, observerWrapper);
         }
 
-        @Override
-        public void postValueDelay(T value, long delay, TimeUnit unit) {
-            postValueDelay(value, TimeUnit.MILLISECONDS.convert(delay, unit));
+        @MainThread
+        private void observeStickyInternal(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
+            ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
+            liveData.observe(owner, observerWrapper);
         }
 
-        @Override
-        public void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observe(owner, new SafeCastObserver<>(observer));
+        @MainThread
+        private void observeForeverInternal(@NonNull Observer<T> observer) {
+            ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
+            observerWrapper.preventNextEvent = liveData.getVersion() > ExternalLiveData.START_VERSION;
+            observerMap.put(observer, observerWrapper);
+            liveData.observeForever(observerWrapper);
         }
 
-        @Override
-        public void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
-            super.observeSticky(owner, new SafeCastObserver<>(observer));
+        @MainThread
+        private void observeStickyForeverInternal(@NonNull Observer<T> observer) {
+            ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
+            observerMap.put(observer, observerWrapper);
+            liveData.observeForever(observerWrapper);
         }
 
-        @Override
-        public void observeForever(@NonNull Observer<T> observer) {
-            if (!observerMap.containsKey(observer)) {
-                observerMap.put(observer, createForeverObserver(observer));
-            }
-            super.observeForever(observerMap.get(observer));
-        }
-
-        public void observeStickyForever(@NonNull Observer<T> observer) {
-            super.observeForever(observer);
-        }
-
-        @Override
-        public void removeObserver(@NonNull Observer<T> observer) {
-            Observer realObserver = null;
+        @MainThread
+        private void removeObserverInternal(@NonNull Observer<T> observer) {
+            Observer<T> realObserver;
             if (observerMap.containsKey(observer)) {
                 realObserver = observerMap.remove(observer);
             } else {
                 realObserver = observer;
             }
-            super.removeObserver(realObserver);
-            if (!hasObservers()) {
+            liveData.removeObserver(realObserver);
+            if (!liveData.hasObservers()) {
                 LiveEventBus.get().bus.remove(key);
+            }
+        }
+
+        private class PostValueTask implements Runnable {
+            private Object newValue;
+
+            public PostValueTask(@NonNull Object newValue) {
+                this.newValue = newValue;
+            }
+
+            @Override
+            public void run() {
+                postInternal((T) newValue);
             }
         }
     }
@@ -248,62 +372,18 @@ public final class LiveEventBus {
 
         @NonNull
         private final Observer<T> observer;
+        private boolean preventNextEvent = false;
 
-        @NonNull
-        private final String filterClass;
-
-        @NonNull
-        private final String filterMethod;
-
-        ObserverWrapper(@NonNull Observer<T> observer, @NonNull String filterClass, @NonNull String filterMethod) {
+        ObserverWrapper(@NonNull Observer<T> observer) {
             this.observer = observer;
-            this.filterClass = filterClass;
-            this.filterMethod = filterMethod;
         }
 
         @Override
         public void onChanged(@Nullable T t) {
-            if (isFilterChanged()) {
+            if (preventNextEvent) {
+                preventNextEvent = false;
                 return;
             }
-            try {
-                observer.onChanged(t);
-            } catch (ClassCastException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private boolean isFilterChanged() {
-            StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-            if (stackTrace != null && stackTrace.length > 0) {
-                for (StackTraceElement element : stackTrace) {
-                    if (filterClass.equals(element.getClassName()) &&
-                            filterMethod.equals(element.getMethodName())) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-    }
-
-    private static <T> ObserverWrapper createForeverObserver(Observer<T> observer) {
-        return new ObserverWrapper<>(observer, "android.arch.lifecycle.LiveData",
-                "observeForever");
-    }
-
-    private static class SafeCastObserver<T> implements Observer<T> {
-
-        @NonNull
-        private final Observer<T> observer;
-
-        SafeCastObserver(@NonNull Observer<T> observer) {
-            this.observer = observer;
-        }
-
-        @Override
-        public void onChanged(@Nullable T t) {
             try {
                 observer.onChanged(t);
             } catch (ClassCastException e) {
