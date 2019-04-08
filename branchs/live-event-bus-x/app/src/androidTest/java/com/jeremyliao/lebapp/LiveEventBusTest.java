@@ -627,4 +627,56 @@ public class LiveEventBusTest {
         Assert.assertFalse(liveData.hasActiveObservers());
         Assert.assertFalse(liveData.hasObservers());
     }
+
+
+    @Test
+    public void testSendSameMsg() throws Exception {
+        final String key = "key_test_send_same_msg";
+        final Wrapper<Integer> count = new Wrapper<>(0);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observe(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        count.setTarget(count.getTarget() + 1);
+                    }
+                });
+        Thread.sleep(500);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post("hello");
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post("hello");
+        Thread.sleep(500);
+        Assert.assertEquals(count.getTarget().intValue(), 2);
+    }
+
+    @Test
+    public void testSendEmptyMsg() throws Exception {
+        final String key = "key_test_send_empty_msg";
+        final Wrapper<String> result = new Wrapper<>("");
+        final Wrapper<Boolean> received = new Wrapper<>(false);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observe(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        result.setTarget(s);
+                        received.setTarget(true);
+                    }
+                });
+        Thread.sleep(500);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post(null);
+        Thread.sleep(500);
+        Assert.assertNull(result.getTarget());
+        Assert.assertTrue(received.getTarget());
+    }
 }
