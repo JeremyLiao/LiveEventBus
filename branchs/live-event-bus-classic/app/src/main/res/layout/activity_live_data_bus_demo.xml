@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.jeremyliao.lebapp.LiveEventBusDemo" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="20dp"
+            android:text="LiveEventBus Demo"
+            android:textColor="@android:color/black"
+            android:textSize="20sp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMsgBySetValue()}"
+            android:text="用SetValue发送消息（主线程）" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMsgByPostValue()}"
+            android:text="用PostValue发送消息（后台线程发送，主线程接收）" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMsgToForeverObserver()}"
+            android:text="发送消息给observeForever()注册的订阅者" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.startNewActivity()}"
+            android:text="Start一个新的Activity（测试close all）" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.closeAll()}"
+            android:text="关闭All Activity" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMsgToStickyReceiver()}"
+            android:text="发送消息给Sticky Receiver" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.startStickyActivity()}"
+            android:text="Start Sticky Activity（测试Sticky）" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.postValueCountTest()}"
+            android:text="测试PostValue会丢失消息的问题" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.testMessageSetBefore()}"
+            android:text="测试动态注册一个Observer会收到之前发送的消息的问题" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMessageSetBefore()}"
+            android:text="发送的消息给之前动态注册的Observer" />
+
+    </LinearLayout>
+</layout>

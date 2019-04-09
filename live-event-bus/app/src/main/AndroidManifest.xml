@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.jeremyliao.lebapp">
+
+    <application
+        android:name=".app.DemoApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="LiveEventBus"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.jeremyliao.lebapp.LiveEventBusDemo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.jeremyliao.lebapp.activity.StickyActivity" />
+        <activity android:name="com.jeremyliao.lebapp.activity.TestActivity" />
+        <activity android:name=".activity.ObserverActiveLevelActivity" />
+
+        <service
+            android:name=".service.IpcService"
+            android:process=":ipcTest" />
+    </application>
+
+</manifest>
