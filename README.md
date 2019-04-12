@@ -53,12 +53,12 @@ LiveEventBus.get()
 
 ```java
 LiveEventBus.get()
-    .with("key_name", String.class)
-    .observe(this, new Observer<String>() {
-        @Override
-        public void onChanged(@Nullable String s) {
-        }
-    });
+	.with("key_name", String.class)
+	.observe(this, new Observer<String>() {
+	    @Override
+	    public void onChanged(@Nullable String s) {
+	    }
+	});
 ```
 
 #### 以Forever模式订阅和取消订阅消息
@@ -68,8 +68,8 @@ Forever模式订阅消息，需要调用removeObserver取消订阅
 
 ```java
 LiveEventBus.get()
-    .with("key_name", String.class)
-    .observeForever(observer);
+	.with("key_name", String.class)
+	.observeForever(observer);
 ```
 
 - **removeObserver**
@@ -78,8 +78,8 @@ LiveEventBus.get()
 
 ```java
 LiveEventBus.get()
-    .with("key_name", String.class)
-    .removeObserver(observer);
+	.with("key_name", String.class)
+	.removeObserver(observer);
 ```
 
 #### 发送消息
@@ -149,6 +149,12 @@ LiveEventBus.get()
 -keep class com.jeremyliao.liveeventbus.LiveEventBus { *; }
 -keep class android.arch.lifecycle.ExternalLiveData { *; }
 ```
+for androidx:
+```
+-dontwarn com.jeremyliao.liveeventbus.**
+-keep class com.jeremyliao.liveeventbus.LiveEventBus { *; }
+-keep class androidx.lifecycle.ExternalLiveData { *; }
+```
 
 ## 其他分支版本
 #### [AndroidX](/branchs/live-event-bus-x/liveeventbus-x/src/main/java/com/jeremyliao/liveeventbus)
@@ -201,10 +207,6 @@ LiveEventBus.get()
 ## 其他
 - 欢迎提Issue与作者交流
 - 欢迎提Pull request，帮助 fix bug，增加新的feature，让LiveEventBus变得更强大、更好用
-
-## 新框架：invoking-message :new:
-invoking-message是我近期开发的消息总线框架，基于当前项目LiveEventBus实现。它颠覆了传统消息总线定义和使用的方式，通过链式的方法调用发送和接收消息，使用更简单。推荐大家使用，也欢迎大家Star：
-[invoking-message](https://github.com/JeremyLiao/invoking-message)
 
 ## More Open Source by JeremyLiao
 
