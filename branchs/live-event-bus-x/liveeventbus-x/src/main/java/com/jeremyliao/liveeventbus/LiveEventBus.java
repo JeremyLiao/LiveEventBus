@@ -1,5 +1,11 @@
 package com.jeremyliao.liveeventbus;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -7,12 +13,6 @@ import androidx.lifecycle.ExternalLiveData;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Looper;
 
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
@@ -22,7 +22,6 @@ import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by liaohailiang on 2019/1/21.
@@ -171,13 +170,6 @@ public final class LiveEventBus {
          * @param observer
          */
         void removeObserver(@NonNull Observer<T> observer);
-    }
-
-    private class LifecycleLiveData<T> extends ExternalLiveData<T> {
-        @Override
-        protected Lifecycle.State observerActiveLevel() {
-            return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
-        }
     }
 
     private class LiveEvent<T> implements Observable<T> {
@@ -349,8 +341,19 @@ public final class LiveEventBus {
                 realObserver = observer;
             }
             liveData.removeObserver(realObserver);
-            if (!liveData.hasObservers()) {
-                LiveEventBus.get().bus.remove(key);
+        }
+
+        private class LifecycleLiveData<T> extends ExternalLiveData<T> {
+            @Override
+            protected Lifecycle.State observerActiveLevel() {
+                return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
+            }
+
+            @Override
+            protected void onInactive() {
+                if (!liveData.hasObservers()) {
+                    LiveEventBus.get().bus.remove(key);
+                }
             }
         }
 

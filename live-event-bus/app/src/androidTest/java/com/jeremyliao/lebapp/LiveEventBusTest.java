@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.jeremyliao.lebapp.activity.TestActivity;
 import com.jeremyliao.lebapp.helper.LiveEventBusTestHelper;
@@ -26,10 +27,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
  * Created by liaohailiang on 2018/12/6.
@@ -622,8 +619,8 @@ public class LiveEventBusTest {
         Assert.assertEquals(map.size(), 0);
         Assert.assertTrue(liveData.hasActiveObservers());
         Assert.assertTrue(liveData.hasObservers());
-        rule.getActivity().finish();
-        Thread.sleep(500);
+        rule.finishActivity();
+        Thread.sleep(1000);
         Assert.assertEquals(map.size(), 0);
         Assert.assertFalse(liveData.hasActiveObservers());
         Assert.assertFalse(liveData.hasObservers());
@@ -678,5 +675,48 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         Assert.assertNull(result.getTarget());
         Assert.assertTrue(received.getTarget());
+    }
+
+    @Test
+    public void testClearBusOnRemove() throws Exception {
+        final String key = "test_clear_bus_on_remove";
+        int count = LiveEventBusTestHelper.getLiveEventBusCount();
+        Observer observer = new Observer() {
+            @Override
+            public void onChanged(@Nullable Object o) {
+            }
+        };
+        LiveEventBus
+                .get()
+                .with(key)
+                .observeForever(observer);
+        Thread.sleep(500);
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), count + 1);
+        LiveEventBus
+                .get()
+                .with(key)
+                .removeObserver(observer);
+        Thread.sleep(500);
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), count);
+    }
+
+    @Test
+    public void testClearBusOnRemoveAuto() throws Exception {
+        final String key = "test_clear_bus_on_remove_auto";
+        int count = LiveEventBusTestHelper.getLiveEventBusCount();
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observe(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                    }
+                });
+        Thread.sleep(500);
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), count + 1);
+        rule.finishActivity();
+        Thread.sleep(1000);
+        Log.d("LiveEventBus", "bus.size final: " + LiveEventBusTestHelper.getLiveEventBusCount());
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), 0);
     }
 }

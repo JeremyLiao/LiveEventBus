@@ -3,13 +3,13 @@ package com.jeremyliao.lebapp;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.test.runner.AndroidJUnit4;
+
 import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.runner.AndroidJUnit4;
 
 
 /**

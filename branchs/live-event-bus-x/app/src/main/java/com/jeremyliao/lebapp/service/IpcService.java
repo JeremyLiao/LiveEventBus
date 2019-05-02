@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.jeremyliao.liveeventbus.LiveEventBus;
-
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
+
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 /**
  * Created by liaohailiang on 2019/3/26.

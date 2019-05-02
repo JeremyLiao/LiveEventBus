@@ -1,9 +1,10 @@
 package com.jeremyliao.lebapp.activity;
 
+import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
-import android.os.Bundle;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
 

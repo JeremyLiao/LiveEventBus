@@ -8,8 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.jeremyliao.lebapp.LiveEventBusDemo;
 import com.jeremyliao.lebapp.R;
-import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.lebapp.databinding.ActivityStickyDemoBinding;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 
 public class StickyActivity extends AppCompatActivity {

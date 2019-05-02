@@ -1,15 +1,16 @@
 package com.jeremyliao.lebapp.activity;
 
+import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.Observer;
-import android.os.Bundle;
 
 import com.jeremyliao.lebapp.LiveEventBusDemo;
 import com.jeremyliao.lebapp.R;
-import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.lebapp.databinding.ActivityStickyDemoBinding;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 
 public class StickyActivity extends AppCompatActivity {

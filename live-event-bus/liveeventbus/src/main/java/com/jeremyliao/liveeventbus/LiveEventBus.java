@@ -3,7 +3,6 @@ package com.jeremyliao.liveeventbus;
 import android.arch.lifecycle.ExternalLiveData;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,6 @@ import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by liaohailiang on 2019/1/21.
@@ -171,13 +169,6 @@ public final class LiveEventBus {
          * @param observer
          */
         void removeObserver(@NonNull Observer<T> observer);
-    }
-
-    private class LifecycleLiveData<T> extends ExternalLiveData<T> {
-        @Override
-        protected Lifecycle.State observerActiveLevel() {
-            return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
-        }
     }
 
     private class LiveEvent<T> implements Observable<T> {
@@ -349,8 +340,19 @@ public final class LiveEventBus {
                 realObserver = observer;
             }
             liveData.removeObserver(realObserver);
-            if (!liveData.hasObservers()) {
-                LiveEventBus.get().bus.remove(key);
+        }
+
+        private class LifecycleLiveData<T> extends ExternalLiveData<T> {
+            @Override
+            protected Lifecycle.State observerActiveLevel() {
+                return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
+            }
+
+            @Override
+            protected void onInactive() {
+                if (!liveData.hasObservers()) {
+                    LiveEventBus.get().bus.remove(key);
+                }
             }
         }
 

@@ -1,13 +1,13 @@
 package com.jeremyliao.lebapp;
 
 
+import androidx.test.runner.AndroidJUnit4;
+
 import com.jeremyliao.liveeventbus.utils.AppUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import androidx.test.runner.AndroidJUnit4;
 
 /**
  * Created by liaohailiang on 2019/3/20.

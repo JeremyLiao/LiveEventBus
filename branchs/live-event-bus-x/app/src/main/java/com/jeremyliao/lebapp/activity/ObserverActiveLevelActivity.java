@@ -2,13 +2,13 @@ package com.jeremyliao.lebapp.activity;
 
 import android.os.Bundle;
 
-import com.jeremyliao.lebapp.LiveEventBusDemo;
-import com.jeremyliao.lebapp.R;
-import com.jeremyliao.liveeventbus.LiveEventBus;
-import com.jeremyliao.lebapp.databinding.ActivityObserverActiveLevelDemoBinding;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+
+import com.jeremyliao.lebapp.LiveEventBusDemo;
+import com.jeremyliao.lebapp.R;
+import com.jeremyliao.lebapp.databinding.ActivityObserverActiveLevelDemoBinding;
+import com.jeremyliao.liveeventbus.LiveEventBus;
 
 
 public class ObserverActiveLevelActivity extends AppCompatActivity {
