@@ -1,5 +1,5 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.4.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.4.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
@@ -19,11 +19,11 @@ LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期�
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.4.0'
+implementation 'com.jeremyliao:live-event-bus:1.4.1'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.4.0'
+implementation 'com.jeremyliao:live-event-bus-x:1.4.1'
 ```
 
 ## 配置
@@ -221,3 +221,4 @@ for androidx:
 9. [jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo)  AndroidStudio运行jacoco计算测试覆盖率的Demo
 10. [android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 深入浅出Android Gradle
 11. [invoking-message](https://github.com/JeremyLiao/invoking-message) 消息总线框架，基于LiveEventBus实现。它颠覆了传统消息总线定义和使用的方式，通过链式的方法调用发送和接收消息，使用更简单
+12. [DataLoader](https://github.com/JeremyLiao/DataLoader) 一个Android异步数据加载框架，用于Activity打开之前预加载数据，页面启动速度优化利器
