@@ -719,4 +719,25 @@ public class LiveEventBusTest {
         Log.d("LiveEventBus", "bus.size final: " + LiveEventBusTestHelper.getLiveEventBusCount());
         Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), 0);
     }
+
+    @Test
+    public void testClearBusOnRemoveAutoAndAlwaysActiveFalse() throws Exception {
+        LiveEventBus.get().config().lifecycleObserverAlwaysActive(false);
+        final String key = "test_clear_bus_on_remove_auto_aaf";
+        int count = LiveEventBusTestHelper.getLiveEventBusCount();
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observe(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                    }
+                });
+        Thread.sleep(500);
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), count + 1);
+        rule.finishActivity();
+        Thread.sleep(1000);
+        Log.d("LiveEventBus", "bus.size final: " + LiveEventBusTestHelper.getLiveEventBusCount());
+        Assert.assertEquals(LiveEventBusTestHelper.getLiveEventBusCount(), 0);
+    }
 }

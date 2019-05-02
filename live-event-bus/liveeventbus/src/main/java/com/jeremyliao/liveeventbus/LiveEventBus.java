@@ -349,7 +349,8 @@ public final class LiveEventBus {
             }
 
             @Override
-            protected void onInactive() {
+            public void removeObserver(@NonNull Observer<T> observer) {
+                super.removeObserver(observer);
                 if (!liveData.hasObservers()) {
                     LiveEventBus.get().bus.remove(key);
                 }
