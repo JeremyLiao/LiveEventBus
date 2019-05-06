@@ -146,14 +146,16 @@ LiveEventBus.get()
 
 ```
 -dontwarn com.jeremyliao.liveeventbus.**
--keep class com.jeremyliao.liveeventbus.LiveEventBus { *; }
--keep class android.arch.lifecycle.ExternalLiveData { *; }
+-keep class com.jeremyliao.liveeventbus.** { *; }
+-keep class android.arch.lifecycle.** { *; }
+-keep class android.arch.core.** { *; }
 ```
 for androidx:
 ```
 -dontwarn com.jeremyliao.liveeventbus.**
--keep class com.jeremyliao.liveeventbus.LiveEventBus { *; }
--keep class androidx.lifecycle.ExternalLiveData { *; }
+-keep class com.jeremyliao.liveeventbus.** { *; }
+-keep class androidx.lifecycle.** { *; }
+-keep class androidx.arch.core.** { *; }
 ```
 
 ## 其他分支版本
