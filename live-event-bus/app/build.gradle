@@ -12,7 +12,8 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -38,6 +39,7 @@ dependencies {
 
     //liveeventbus
     implementation project(':liveeventbus')
+//    implementation 'com.jeremyliao:live-event-bus:1.4.2'
 
     //test
     testImplementation 'junit:junit:4.12'
