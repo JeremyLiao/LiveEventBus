@@ -45,6 +45,7 @@ public final class LiveEventBus {
 
     private Context appContext;
     private boolean lifecycleObserverAlwaysActive = true;
+    private boolean autoClear = false;
     private IEncoder encoder = new ValueEncoder();
     private Config config = new Config();
     private LebIpcReceiver receiver = new LebIpcReceiver();
@@ -84,6 +85,16 @@ public final class LiveEventBus {
          */
         public Config lifecycleObserverAlwaysActive(boolean active) {
             lifecycleObserverAlwaysActive = active;
+            return this;
+        }
+
+        /**
+         * @param clear
+         * @return true: clear livedata when no observer observe it
+         * false: not clear livedata unless app was killed
+         */
+        public Config autoClear(boolean clear) {
+            autoClear = clear;
             return this;
         }
 
@@ -352,7 +363,7 @@ public final class LiveEventBus {
             @Override
             public void removeObserver(@NonNull Observer<? super T> observer) {
                 super.removeObserver(observer);
-                if (!liveData.hasObservers()) {
+                if (autoClear && !liveData.hasObservers()) {
                     LiveEventBus.get().bus.remove(key);
                 }
             }
