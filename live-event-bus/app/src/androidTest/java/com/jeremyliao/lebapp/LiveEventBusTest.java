@@ -580,6 +580,31 @@ public class LiveEventBusTest {
     }
 
     @Test
+    public void testBroadcastStringValueForeground() throws Exception {
+        final String key = "key_test_broadcast_string_foreground";
+        final Wrapper<String> wrapper = new Wrapper<>(null);
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus.get()
+                        .with(key, String.class)
+                        .observe(rule.getActivity(), new Observer<String>() {
+                            @Override
+                            public void onChanged(@Nullable String s) {
+                                wrapper.setTarget(s);
+                            }
+                        });
+            }
+        });
+        Thread.sleep(500);
+        LiveEventBus.get()
+                .with(key, String.class)
+                .broadcast("value_test_broadcast_value", true);
+        Thread.sleep(500);
+        Assert.assertEquals(wrapper.getTarget(), "value_test_broadcast_value");
+    }
+
+    @Test
     public void testRemoveObserve() throws Exception {
         LiveEventBus.Observable<String> observe = LiveEventBus.get().with("key_test_remove_observe", String.class);
         Map map = (Map) LiveEventBusTestHelper.getLiveEventField("observerMap", observe);
