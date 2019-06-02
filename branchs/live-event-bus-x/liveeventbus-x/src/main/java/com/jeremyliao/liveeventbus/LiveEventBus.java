@@ -3,6 +3,7 @@ package com.jeremyliao.liveeventbus;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -155,6 +156,14 @@ public final class LiveEventBus {
         void postDelay(T value, long delay);
 
         /**
+         * 发送一个消息，支持前台线程、后台线程发送
+         * 需要跨进程、跨APP发送消息的时候调用该方法
+         *
+         * @param value
+         */
+        void broadcast(T value, boolean foreground);
+
+        /**
          * 注册一个Observer，生命周期感知，自动取消订阅
          *
          * @param owner
@@ -217,26 +226,31 @@ public final class LiveEventBus {
         }
 
         @Override
-        public void broadcast(final T value) {
+        public void broadcast(T value) {
+            broadcast(value, false);
+        }
+
+        @Override
+        public void postDelay(T value, long delay) {
+            mainHandler.postDelayed(new PostValueTask(value), delay);
+        }
+
+        @Override
+        public void broadcast(final T value, final boolean foreground) {
             if (appContext != null) {
                 if (ThreadUtils.isMainThread()) {
-                    broadcastInternal(value);
+                    broadcastInternal(value, foreground);
                 } else {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            broadcastInternal(value);
+                            broadcastInternal(value, foreground);
                         }
                     });
                 }
             } else {
                 post(value);
             }
-        }
-
-        @Override
-        public void postDelay(T value, long delay) {
-            mainHandler.postDelayed(new PostValueTask(value), delay);
         }
 
         @Override
@@ -315,8 +329,11 @@ public final class LiveEventBus {
         }
 
         @MainThread
-        private void broadcastInternal(T value) {
+        private void broadcastInternal(T value, boolean foreground) {
             Intent intent = new Intent(IpcConst.ACTION);
+            if (foreground && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            }
             intent.putExtra(IpcConst.KEY, key);
             try {
                 encoder.encode(intent, value);
