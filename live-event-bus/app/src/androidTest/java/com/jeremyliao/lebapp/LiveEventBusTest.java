@@ -23,6 +23,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -786,5 +788,84 @@ public class LiveEventBusTest {
         }
         Thread.sleep(500);
         Assert.assertEquals(counter.getTarget().intValue(), 10);
+    }
+
+    @Test
+    public void testContinuePost() throws Exception {
+        final String key = "test_continue_post";
+        final Wrapper<Integer> counter = new Wrapper<>(0);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observe(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        counter.setTarget(counter.getTarget() + 1);
+                    }
+                });
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post(null);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post("初始化中");
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post("上一条提示信息");
+        Thread.sleep(500);
+        Assert.assertEquals(counter.getTarget().intValue(), 3);
+    }
+
+    @Test
+    public void testPostNull() throws Exception {
+        final String key = "test_post_null";
+        final Wrapper<Integer> counter = new Wrapper<>(0);
+        final Wrapper<String> result = new Wrapper<>("aaa");
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .post(null);
+        Thread.sleep(500);
+        LiveEventBus
+                .get()
+                .with(key, String.class)
+                .observeSticky(rule.getActivity(), new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        counter.setTarget(counter.getTarget() + 1);
+                        result.setTarget(s);
+                    }
+                });
+        Thread.sleep(500);
+        Assert.assertEquals(counter.getTarget().intValue(), 1);
+        Assert.assertNull(result.getTarget());
+    }
+
+    @Test
+    public void testPostOrderly() throws Exception {
+        final String key = "test_post_orderly";
+        final List<Integer> result = new ArrayList<>();
+        LiveEventBus
+                .get()
+                .with(key, Integer.class)
+                .observe(rule.getActivity(), new Observer<Integer>() {
+                    @Override
+                    public void onChanged(@Nullable Integer integer) {
+                        result.add(integer);
+                    }
+                });
+        for (int i = 0; i < 10; i++) {
+            LiveEventBus
+                    .get()
+                    .with(key, Integer.class)
+                    .postOrderly(i);
+        }
+        Thread.sleep(500);
+        for (int i = 0; i < 10; i++) {
+            Assert.assertEquals(result.get(i).intValue(), i);
+        }
     }
 }

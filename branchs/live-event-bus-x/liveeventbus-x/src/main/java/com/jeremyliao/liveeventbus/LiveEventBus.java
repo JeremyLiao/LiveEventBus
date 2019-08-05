@@ -157,6 +157,14 @@ public final class LiveEventBus {
 
         /**
          * 发送一个消息，支持前台线程、后台线程发送
+         * 接收到消息的顺序和发送顺序一致
+         *
+         * @param value
+         */
+        void postOrderly(T value);
+
+        /**
+         * 发送一个消息，支持前台线程、后台线程发送
          * 需要跨进程、跨APP发送消息的时候调用该方法
          *
          * @param value
@@ -233,6 +241,11 @@ public final class LiveEventBus {
         @Override
         public void postDelay(T value, long delay) {
             mainHandler.postDelayed(new PostValueTask(value), delay);
+        }
+
+        @Override
+        public void postOrderly(T value) {
+            mainHandler.post(new PostValueTask(value));
         }
 
         @Override
