@@ -25,8 +25,7 @@ public class LebIpcReceiver extends BroadcastReceiver {
                 Object value = decoder.decode(intent);
                 if (key != null) {
                     LiveEventBus
-                            .get()
-                            .with(key)
+                            .get(key)
                             .post(value);
                 }
             } catch (DecodeException e) {

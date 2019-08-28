@@ -3,6 +3,7 @@ package com.jeremyliao.lebapp.helper;
 import android.content.Context;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
+import com.jeremyliao.liveeventbus.core.LiveEventBusCore;
 
 import java.lang.reflect.Field;
 import java.util.Map;
@@ -17,9 +18,9 @@ public class LiveEventBusTestHelper {
 
     public static int getLiveEventBusCount() {
         try {
-            Field bus = LiveEventBus.class.getDeclaredField("bus");
+            Field bus = LiveEventBusCore.class.getDeclaredField("bus");
             bus.setAccessible(true);
-            Map map = (Map) bus.get(LiveEventBus.get());
+            Map map = (Map) bus.get(LiveEventBusCore.get());
             return map.size();
         } catch (Exception e) {
             e.printStackTrace();
@@ -29,9 +30,9 @@ public class LiveEventBusTestHelper {
 
     public static Object getObject(String name) {
         try {
-            Field field = LiveEventBus.class.getDeclaredField(name);
+            Field field = LiveEventBusCore.class.getDeclaredField(name);
             field.setAccessible(true);
-            return field.get(LiveEventBus.get());
+            return field.get(LiveEventBusCore.get());
         } catch (Exception e) {
             e.printStackTrace();
             return null;

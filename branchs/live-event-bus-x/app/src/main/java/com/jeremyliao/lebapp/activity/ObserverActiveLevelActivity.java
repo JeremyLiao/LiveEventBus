@@ -29,8 +29,8 @@ public class ObserverActiveLevelActivity extends AppCompatActivity {
     }
 
     public void sendMsgToPrevent() {
-        LiveEventBus.get()
-                .with(LiveEventBusDemo.KEY_TEST_ACTIVE_LEVEL)
+        LiveEventBus
+                .get(LiveEventBusDemo.KEY_TEST_ACTIVE_LEVEL)
                 .post("Send Msg To Observer Stopped");
     }
 }
