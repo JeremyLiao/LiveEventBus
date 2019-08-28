@@ -27,24 +27,24 @@ public class StickyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sticky_demo);
         binding.setLifecycleOwner(this);
-        LiveEventBus.get()
-                .with(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
+        LiveEventBus
+                .get(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
                 .observeSticky(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
                         binding.tvSticky1.setText("observeSticky注册的观察者收到消息: " + s);
                     }
                 });
-        LiveEventBus.get()
-                .with(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
+        LiveEventBus
+                .get(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
                 .observeStickyForever(observer);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LiveEventBus.get()
-                .with(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
+        LiveEventBus
+                .get(LiveEventBusDemo.KEY_TEST_STICKY, String.class)
                 .removeObserver(observer);
     }
 }

@@ -17,16 +17,16 @@ public class IpcService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        LiveEventBus.get()
-                .with("key_test_broadcast", String.class)
+        LiveEventBus
+                .get("key_test_broadcast", String.class)
                 .observeForever(observer);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        LiveEventBus.get()
-                .with("key_test_broadcast", String.class)
+        LiveEventBus
+                .get("key_test_broadcast", String.class)
                 .removeObserver(observer);
     }
 

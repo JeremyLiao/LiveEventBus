@@ -12,7 +12,7 @@ public class DemoApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        LiveEventBus.get()
+        LiveEventBus
                 .config()
                 .supportBroadcast(this)
                 .lifecycleObserverAlwaysActive(true);

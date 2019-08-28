@@ -29,27 +29,27 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LiveEventBus.get()
-                .with(KEY_TEST_OBSERVE, String.class)
+        LiveEventBus
+                .get(KEY_TEST_OBSERVE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
                         strResult = s;
                     }
                 });
-        LiveEventBus.get()
-                .with(KEY_TEST_OBSERVE_FOREVER, String.class)
+        LiveEventBus
+                .get(KEY_TEST_OBSERVE_FOREVER, String.class)
                 .observeForever(observer);
-        LiveEventBus.get()
-                .with(KEY_TEST_MULTI_THREAD_POST, String.class)
+        LiveEventBus
+                .get(KEY_TEST_MULTI_THREAD_POST, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
                         receiveCount++;
                     }
                 });
-        LiveEventBus.get()
-                .with(KEY_TEST_BROADCAST_VALUE, String.class)
+        LiveEventBus
+                .get(KEY_TEST_BROADCAST_VALUE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -60,9 +60,9 @@ public class TestActivity extends AppCompatActivity {
     }
 
     private void testMessageSetBeforeOnCreate() {
-        LiveEventBus.get().with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).post("msg_set_before");
-        LiveEventBus.get()
-                .with(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
+        LiveEventBus.get(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class).post("msg_set_before");
+        LiveEventBus
+                .get(KEY_TEST_MSG_SET_BEFORE_ON_CREATE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -75,8 +75,8 @@ public class TestActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LiveEventBus.get()
-                .with(KEY_TEST_OBSERVE_FOREVER, String.class)
+        LiveEventBus
+                .get(KEY_TEST_OBSERVE_FOREVER, String.class)
                 .removeObserver(observer);
     }
 }
