@@ -1,5 +1,5 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.4.5-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
@@ -19,18 +19,18 @@ LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期�
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.4.5'
+implementation 'com.jeremyliao:live-event-bus:1.5.0'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.4.5'
+implementation 'com.jeremyliao:live-event-bus-x:1.5.0'
 ```
 
 ## 配置
 在Application.onCreate方法中配置：
 
 ```
-LiveEventBus.get()
+LiveEventBus
         .config()
         .supportBroadcast(this)
         .lifecycleObserverAlwaysActive(true)
@@ -57,8 +57,8 @@ LiveEventBus.get()
 具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
 
 ```java
-LiveEventBus.get()
-	.with("key_name", String.class)
+LiveEventBus
+	.get("key_name", String.class)
 	.observe(this, new Observer<String>() {
 	    @Override
 	    public void onChanged(@Nullable String s) {
@@ -72,8 +72,8 @@ LiveEventBus.get()
 Forever模式订阅消息，需要调用removeObserver取消订阅
 
 ```java
-LiveEventBus.get()
-	.with("key_name", String.class)
+LiveEventBus
+	.get("key_name", String.class)
 	.observeForever(observer);
 ```
 
@@ -82,8 +82,8 @@ LiveEventBus.get()
 取消订阅消息
 
 ```java
-LiveEventBus.get()
-	.with("key_name", String.class)
+LiveEventBus
+	.get("key_name", String.class)
 	.removeObserver(observer);
 ```
 
@@ -93,8 +93,8 @@ LiveEventBus.get()
 发送一个消息，支持前台线程、后台线程发送
 
 ```java
-LiveEventBus.get()
-    .with("key_name")
+LiveEventBus
+    .get("key_name")
     .post(value);
 ```
 
@@ -103,8 +103,8 @@ LiveEventBus.get()
 延迟发送一个消息，支持前台线程、后台线程发送
 
 ```java
-LiveEventBus.get()
-    .with("key_name")
+LiveEventBus
+    .get("key_name")
     .postDelay(value, 1000);
 ```
 
@@ -114,16 +114,16 @@ LiveEventBus.get()
 跨进程、跨APP发送消息，支持前台线程、后台线程发送。需要设置supportBroadcast
 
 ```java
-LiveEventBus.get()
-        .with("key_name")
+LiveEventBus
+        .get("key_name")
         .broadcast(value);
 ```
 
 以前台队列的形式发送跨进程消息
 
 ```java
-LiveEventBus.get()
-        .with("key_name")
+LiveEventBus
+        .get("key_name")
         .broadcast(value, true);
 ```
 
@@ -135,8 +135,8 @@ LiveEventBus.get()
 以Sticky模式订阅消息，具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
 
 ```java
-LiveEventBus.get()
-        .with("sticky_key", String.class)
+LiveEventBus
+        .get("sticky_key", String.class)
         .observeSticky(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s){
@@ -148,12 +148,12 @@ LiveEventBus.get()
 Forever模式订阅消息，需要调用removeObserver取消订阅，Sticky模式
 
 ```java
-LiveEventBus.get()
-        .with("sticky_key", String.class)
+LiveEventBus
+        .get("sticky_key", String.class)
         .observeStickyForever(observer);
 ```
-
-#### 如果使用1.3.X及以下版本，请参考[老版使用方法](docs/OLD_DIRECTION.md)
+-  如果使用1.4.X版本，请参考[使用方法](docs/DIRECTION_1_4.md)
+-  如果使用1.3.X及以下版本，请参考[使用方法](docs/DIRECTION_1_3.md)
 
 ## 混淆规则
 
@@ -201,6 +201,7 @@ for androidx:
 
 版本 | 功能
 ---|---
+1.5.x | 优化接口设计，使用起来更简洁
 1.4.x | 简化对外暴露的接口，重构核心实现，支持前后台线程调用
 1.3.x | 支持跨进程、跨APP通信
 1.2.x | 支持接收消息的模式，支持AndroidX
