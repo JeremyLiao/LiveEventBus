@@ -15,6 +15,14 @@ LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期�
 1. 整个生命周期（从onCreate到onDestroy）都可以实时收到消息
 2. 激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
 
+## 常用消息总线对比
+消息总线 | Sticky | 生命周期感知 | 跨进程/APP
+---|---|---|---
+EventBus | :white_check_mark: | :x: | :x:
+RxBus | :white_check_mark: | :x: | :x:
+LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark:
+SmartEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark:
+
 ## 在工程中引用
 Via Gradle:
 
