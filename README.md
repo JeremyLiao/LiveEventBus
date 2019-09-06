@@ -21,7 +21,6 @@ LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期�
 EventBus | :white_check_mark: | :x: | :x:
 RxBus | :white_check_mark: | :x: | :x:
 LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark:
-SmartEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark:
 
 ## 在工程中引用
 Via Gradle:
