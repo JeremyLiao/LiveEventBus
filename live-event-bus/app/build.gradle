@@ -39,7 +39,7 @@ dependencies {
 
     //liveeventbus
     implementation project(':liveeventbus')
-//    implementation 'com.jeremyliao:live-event-bus:1.4.2'
+//    implementation 'com.jeremyliao:live-event-bus:1.5.0'
 
     //test
     testImplementation 'junit:junit:4.12'

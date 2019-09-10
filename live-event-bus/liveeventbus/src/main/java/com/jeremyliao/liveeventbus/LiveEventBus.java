@@ -1,8 +1,11 @@
 package com.jeremyliao.liveeventbus;
 
+import android.support.annotation.NonNull;
+
 import com.jeremyliao.liveeventbus.core.Config;
 import com.jeremyliao.liveeventbus.core.LiveEventBusCore;
 import com.jeremyliao.liveeventbus.core.Observable;
+import com.jeremyliao.liveeventbus.logger.Logger;
 
 /**
  * _     _           _____                _  ______
@@ -47,9 +50,16 @@ public final class LiveEventBus {
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
      */
-
     public static Config config() {
         return LiveEventBusCore.get().config();
     }
 
+    /**
+     * setLogger, if not set, use DefaultLogger
+     *
+     * @param logger
+     */
+    public static void setLogger(@NonNull Logger logger) {
+        LiveEventBusCore.get().setLogger(logger);
+    }
 }

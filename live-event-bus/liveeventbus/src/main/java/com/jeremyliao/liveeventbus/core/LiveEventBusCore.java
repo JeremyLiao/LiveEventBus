@@ -18,10 +18,13 @@ import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
 import com.jeremyliao.liveeventbus.ipc.encode.ValueEncoder;
 import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
+import com.jeremyliao.liveeventbus.logger.DefaultLogger;
+import com.jeremyliao.liveeventbus.logger.Logger;
 import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * LiveEventBusCore
@@ -49,12 +52,17 @@ public final class LiveEventBusCore {
     IEncoder encoder = new ValueEncoder();
     Config config = new Config();
     private LebIpcReceiver receiver = new LebIpcReceiver();
+    private Logger logger = new DefaultLogger();
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
             bus.put(key, new LiveEvent<>(key));
         }
         return (Observable<T>) bus.get(key);
+    }
+
+    public void setLogger(@NonNull Logger logger) {
+        this.logger = logger;
     }
 
     /**
@@ -205,11 +213,14 @@ public final class LiveEventBusCore {
 
         @MainThread
         private void postInternal(T value) {
+            logger.log(Level.INFO, "post: " + value + " with key: " + key);
             liveData.setValue(value);
         }
 
         @MainThread
         private void broadcastInternal(T value, boolean foreground) {
+            logger.log(Level.INFO, "broadcast: " + value + " foreground: " + foreground +
+                    " with key: " + key);
             Intent intent = new Intent(IpcConst.ACTION);
             if (foreground && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
@@ -228,12 +239,16 @@ public final class LiveEventBusCore {
             ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
             observerWrapper.preventNextEvent = liveData.getVersion() > ExternalLiveData.START_VERSION;
             liveData.observe(owner, observerWrapper);
+            logger.log(Level.INFO, "observe observer: " + observerWrapper + "(" + observer + ")"
+                    + " on owner: " + owner + " with key: " + key);
         }
 
         @MainThread
         private void observeStickyInternal(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer) {
             ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
             liveData.observe(owner, observerWrapper);
+            logger.log(Level.INFO, "observe sticky observer: " + observerWrapper + "(" + observer + ")"
+                    + " on owner: " + owner + " with key: " + key);
         }
 
         @MainThread
@@ -242,6 +257,8 @@ public final class LiveEventBusCore {
             observerWrapper.preventNextEvent = liveData.getVersion() > ExternalLiveData.START_VERSION;
             observerMap.put(observer, observerWrapper);
             liveData.observeForever(observerWrapper);
+            logger.log(Level.INFO, "observe forever observer: " + observerWrapper + "(" + observer + ")"
+                    + " with key: " + key);
         }
 
         @MainThread
@@ -249,6 +266,8 @@ public final class LiveEventBusCore {
             ObserverWrapper<T> observerWrapper = new ObserverWrapper<>(observer);
             observerMap.put(observer, observerWrapper);
             liveData.observeForever(observerWrapper);
+            logger.log(Level.INFO, "observe sticky forever observer: " + observerWrapper + "(" + observer + ")"
+                    + " with key: " + key);
         }
 
         @MainThread
@@ -274,6 +293,7 @@ public final class LiveEventBusCore {
                 if (autoClear && !liveData.hasObservers()) {
                     LiveEventBusCore.get().bus.remove(key);
                 }
+                logger.log(Level.INFO, "observer removed: " + observer);
             }
         }
 
@@ -291,7 +311,7 @@ public final class LiveEventBusCore {
         }
     }
 
-    private static class ObserverWrapper<T> implements Observer<T> {
+    private class ObserverWrapper<T> implements Observer<T> {
 
         @NonNull
         private final Observer<T> observer;
@@ -307,10 +327,11 @@ public final class LiveEventBusCore {
                 preventNextEvent = false;
                 return;
             }
+            logger.log(Level.INFO, "message received: " + t);
             try {
                 observer.onChanged(t);
             } catch (ClassCastException e) {
-                e.printStackTrace();
+                logger.log(Level.WARNING, "error on message received: " + t, e);
             }
         }
     }
