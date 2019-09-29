@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.google.gson.Gson;
 import com.jeremyliao.liveeventbus.ipc.DataType;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;

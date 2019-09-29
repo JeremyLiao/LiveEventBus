@@ -2,7 +2,6 @@ package com.jeremyliao.liveeventbus.ipc.decode;
 
 import android.content.Intent;
 
-import com.google.gson.Gson;
 import com.jeremyliao.liveeventbus.ipc.DataType;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
