@@ -1,6 +1,10 @@
 package com.jeremyliao.liveeventbus.core;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
+import com.jeremyliao.liveeventbus.logger.Logger;
 
 /**
  * Created by liaohailiang on 2019-08-28.
@@ -17,7 +21,7 @@ public class Config {
      * @return
      */
     public Config lifecycleObserverAlwaysActive(boolean active) {
-        LiveEventBusCore.get().lifecycleObserverAlwaysActive = active;
+        LiveEventBusCore.get().setLifecycleObserverAlwaysActive(active);
         return this;
     }
 
@@ -27,7 +31,7 @@ public class Config {
      * false: not clear livedata unless app was killed
      */
     public Config autoClear(boolean clear) {
-        LiveEventBusCore.get().autoClear = clear;
+        LiveEventBusCore.get().setAutoClear(clear);
         return this;
     }
 
@@ -40,6 +44,28 @@ public class Config {
      */
     public Config supportBroadcast(Context context) {
         LiveEventBusCore.get().registerReceiver(context);
+        return this;
+    }
+
+    /**
+     * setJsonConverter
+     * default use gson as json converter
+     *
+     * @param jsonConverter
+     * @return
+     */
+    public Config setJsonConverter(@NonNull JsonConverter jsonConverter) {
+        LiveEventBusCore.get().setJsonConverter(jsonConverter);
+        return this;
+    }
+
+    /**
+     * setLogger, if not set, use DefaultLogger
+     *
+     * @param logger
+     */
+    public Config setLogger(@NonNull Logger logger) {
+        LiveEventBusCore.get().setLogger(logger);
         return this;
     }
 }

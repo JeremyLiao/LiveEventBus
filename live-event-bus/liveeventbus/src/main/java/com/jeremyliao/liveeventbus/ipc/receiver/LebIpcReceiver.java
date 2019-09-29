@@ -9,13 +9,22 @@ import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.decode.DecodeException;
 import com.jeremyliao.liveeventbus.ipc.decode.IDecoder;
 import com.jeremyliao.liveeventbus.ipc.decode.ValueDecoder;
+import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 
 /**
  * Created by liaohailiang on 2019/3/26.
  */
 public class LebIpcReceiver extends BroadcastReceiver {
 
-    private IDecoder decoder = new ValueDecoder();
+    private IDecoder decoder;
+
+    public LebIpcReceiver(JsonConverter jsonConverter) {
+        this.decoder = new ValueDecoder(jsonConverter);
+    }
+
+    public void setJsonConverter(JsonConverter jsonConverter) {
+        this.decoder = new ValueDecoder(jsonConverter);
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {

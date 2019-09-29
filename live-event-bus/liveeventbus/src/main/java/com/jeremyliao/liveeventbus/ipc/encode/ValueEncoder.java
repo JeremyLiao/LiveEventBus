@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import com.google.gson.Gson;
 import com.jeremyliao.liveeventbus.ipc.DataType;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
+import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 
 import java.io.Serializable;
 
@@ -15,7 +16,11 @@ import java.io.Serializable;
  */
 public class ValueEncoder implements IEncoder {
 
-    private Gson gson = new Gson();
+    private final JsonConverter jsonConverter;
+
+    public ValueEncoder(JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+    }
 
     @Override
     public void encode(Intent intent, Object value) throws EncodeException {
@@ -48,7 +53,7 @@ public class ValueEncoder implements IEncoder {
             intent.putExtra(IpcConst.VALUE, (Serializable) value);
         } else {
             try {
-                String json = gson.toJson(value);
+                String json = jsonConverter.toJson(value);
                 intent.putExtra(IpcConst.VALUE_TYPE, DataType.JSON.ordinal());
                 intent.putExtra(IpcConst.VALUE, json);
                 intent.putExtra(IpcConst.CLASS_NAME, value.getClass().getCanonicalName());

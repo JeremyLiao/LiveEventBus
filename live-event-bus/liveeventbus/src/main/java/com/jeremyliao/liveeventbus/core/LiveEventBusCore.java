@@ -17,6 +17,8 @@ import android.support.annotation.Nullable;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
 import com.jeremyliao.liveeventbus.ipc.encode.ValueEncoder;
+import com.jeremyliao.liveeventbus.ipc.json.GsonConverter;
+import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
 import com.jeremyliao.liveeventbus.logger.DefaultLogger;
 import com.jeremyliao.liveeventbus.logger.Logger;
@@ -32,12 +34,9 @@ import java.util.logging.Level;
 
 public final class LiveEventBusCore {
 
-    private final Map<String, LiveEvent<Object>> bus;
-
-    private LiveEventBusCore() {
-        bus = new HashMap<>();
-    }
-
+    /**
+     * 单例模式实现
+     */
     private static class SingletonHolder {
         private static final LiveEventBusCore DEFAULT_BUS = new LiveEventBusCore();
     }
@@ -46,13 +45,35 @@ public final class LiveEventBusCore {
         return SingletonHolder.DEFAULT_BUS;
     }
 
-    boolean lifecycleObserverAlwaysActive = true;
-    boolean autoClear = false;
+    /**
+     * 存放LiveEvent
+     */
+    private final Map<String, LiveEvent<Object>> bus;
+
+    /**
+     * 可配置的项
+     */
+    private final Config config = new Config();
+    private boolean lifecycleObserverAlwaysActive;
+    private boolean autoClear;
     private Context appContext;
-    IEncoder encoder = new ValueEncoder();
-    Config config = new Config();
-    private LebIpcReceiver receiver = new LebIpcReceiver();
-    private Logger logger = new DefaultLogger();
+    private Logger logger;
+
+    /**
+     * 跨进程通信
+     */
+    private IEncoder encoder;
+    private LebIpcReceiver receiver;
+
+    private LiveEventBusCore() {
+        bus = new HashMap<>();
+        lifecycleObserverAlwaysActive = true;
+        autoClear = false;
+        logger = new DefaultLogger();
+        JsonConverter converter = new GsonConverter();
+        encoder = new ValueEncoder(converter);
+        receiver = new LebIpcReceiver(converter);
+    }
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
         if (!bus.containsKey(key)) {
@@ -61,18 +82,18 @@ public final class LiveEventBusCore {
         return (Observable<T>) bus.get(key);
     }
 
-    public void setLogger(@NonNull Logger logger) {
-        this.logger = logger;
-    }
-
     /**
-     * use the inner class Config to set params
+     * use the class Config to set params
      * first of all, call config to get the Config instance
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
      */
     public Config config() {
         return config;
+    }
+
+    void setLogger(@NonNull Logger logger) {
+        this.logger = logger;
     }
 
     void registerReceiver(Context context) {
@@ -84,6 +105,22 @@ public final class LiveEventBusCore {
             intentFilter.addAction(IpcConst.ACTION);
             appContext.registerReceiver(receiver, intentFilter);
         }
+    }
+
+    void setJsonConverter(JsonConverter jsonConverter) {
+        if (jsonConverter == null) {
+            return;
+        }
+        this.encoder = new ValueEncoder(jsonConverter);
+        this.receiver.setJsonConverter(jsonConverter);
+    }
+
+    void setLifecycleObserverAlwaysActive(boolean lifecycleObserverAlwaysActive) {
+        this.lifecycleObserverAlwaysActive = lifecycleObserverAlwaysActive;
+    }
+
+    void setAutoClear(boolean autoClear) {
+        this.autoClear = autoClear;
     }
 
     private class LiveEvent<T> implements Observable<T> {
