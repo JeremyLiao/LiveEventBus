@@ -6,8 +6,8 @@ package com.jeremyliao.liveeventbus.ipc;
 public class IpcConst {
 
     public static final String ACTION = "intent.action.ACTION_LEB_IPC";
-    public static final String KEY = "key";
-    public static final String VALUE_TYPE = "value_type";
-    public static final String VALUE = "value";
-    public static final String CLASS_NAME = "class_name";
+    public static final String KEY = "leb_ipc_key";
+    public static final String VALUE_TYPE = "leb_ipc_value_type";
+    public static final String VALUE = "leb_ipc_value";
+    public static final String CLASS_NAME = "leb_ipc_class_name";
 }
