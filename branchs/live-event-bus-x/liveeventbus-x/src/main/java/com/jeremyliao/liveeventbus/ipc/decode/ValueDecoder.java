@@ -2,16 +2,20 @@ package com.jeremyliao.liveeventbus.ipc.decode;
 
 import android.content.Intent;
 
-import com.google.gson.Gson;
 import com.jeremyliao.liveeventbus.ipc.DataType;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
+import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 
 /**
  * Created by liaohailiang on 2019/3/25.
  */
 public class ValueDecoder implements IDecoder {
 
-    private Gson gson = new Gson();
+    private final JsonConverter jsonConverter;
+
+    public ValueDecoder(JsonConverter jsonConverter) {
+        this.jsonConverter = jsonConverter;
+    }
 
     @Override
     public Object decode(Intent intent) throws DecodeException {
@@ -43,7 +47,7 @@ public class ValueDecoder implements IDecoder {
                 try {
                     String json = intent.getStringExtra(IpcConst.VALUE);
                     String className = intent.getStringExtra(IpcConst.CLASS_NAME);
-                    return gson.fromJson(json, Class.forName(className));
+                    return jsonConverter.fromJson(json, Class.forName(className));
                 } catch (Exception e) {
                     throw new DecodeException(e);
                 }

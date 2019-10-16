@@ -1,5 +1,5 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.3-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
@@ -29,11 +29,11 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.5.1'
+implementation 'com.jeremyliao:live-event-bus:1.5.3'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.5.1'
+implementation 'com.jeremyliao:live-event-bus-x:1.5.3'
 ```
 
 ## 配置
@@ -42,23 +42,18 @@ implementation 'com.jeremyliao:live-event-bus-x:1.5.1'
 ```
 LiveEventBus
         .config()
-        .supportBroadcast(this)
-        .lifecycleObserverAlwaysActive(true)
-        .autoClear(false);
+        ...
 ```
 - **supportBroadcast**
-
 配置支持跨进程、跨APP通信
 
 - **lifecycleObserverAlwaysActive**
-
-配置LifecycleObserver（如Activity）接收消息的模式（默认值true）：
-1. true：整个生命周期（从onCreate到onDestroy）都可以实时收到消息
-2. false：激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
+配置LifecycleObserver（如Activity）接收消息的模式（默认值true）
 
 - **autoClear**
-
 配置在没有Observer关联的时候是否自动清除LiveEvent以释放内存（默认值false）
+
+#### 更多配置信息，请点击：[LiveEventBus的配置](docs/config.md)
 
 ## 使用方法
 #### 以生命周期感知模式订阅消息
@@ -104,8 +99,8 @@ LiveEventBus
 
 ```java
 LiveEventBus
-    .get("key_name")
-    .post(value);
+	.get("key_name")
+	.post(value);
 ```
 
 - **postDelay**
@@ -114,8 +109,8 @@ LiveEventBus
 
 ```java
 LiveEventBus
-    .get("key_name")
-    .postDelay(value, 1000);
+	.get("key_name")
+	.postDelay(value, 1000);
 ```
 
 #### 跨进程、跨APP发送消息
