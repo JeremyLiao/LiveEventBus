@@ -104,6 +104,12 @@
                 android:onClick="@{()->handler.testBroadcast()}"
                 android:text="测试跨进程发送消息" />
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:onClick="@{()->handler.testDelayLife()}"
+                android:text="测试延迟发送带生命周期" />
         </LinearLayout>
     </ScrollView>
 </layout>

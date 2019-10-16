@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
@@ -26,6 +27,9 @@ import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 
 /**
@@ -58,6 +62,7 @@ public final class LiveEventBusCore {
     private boolean autoClear;
     private Context appContext;
     private Logger logger;
+    private final ExecutorService fixedThreadPool = Executors.newCachedThreadPool();
 
     /**
      * 跨进程通信
@@ -153,6 +158,27 @@ public final class LiveEventBusCore {
         @Override
         public void postDelay(T value, long delay) {
             mainHandler.postDelayed(new PostValueTask(value), delay);
+        }
+
+        @Override
+        public void postDelay(final LifecycleOwner owner, final T value, final long delay) {
+            fixedThreadPool.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.d("LiveEventBusCore","Thread Name:" + Thread.currentThread().getName() + "  " + "Thread Id:"  + Thread.currentThread().getId());
+                        Thread.sleep(delay);
+                        if(owner!=null){
+                            if(owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+                                mainHandler.post(new PostValueTask(value));
+                            }
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+
+                    }
+                }
+            });
         }
 
         @Override

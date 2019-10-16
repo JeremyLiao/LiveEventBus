@@ -32,6 +32,17 @@ public interface Observable<T> {
      */
     void postDelay(T value, long delay);
 
+
+    /**
+     * 延迟发送一个消息，支持前台线程、后台线程发送,带生命监听
+     *
+     * @param owner LifecycleOwner实现生命监听
+     * @param value
+     * @param delay 延迟毫秒数
+     */
+    void postDelay(LifecycleOwner owner,T value, long delay);
+
+
     /**
      * 发送一个消息，支持前台线程、后台线程发送
      * 接收到消息的顺序和发送顺序一致
