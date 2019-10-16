@@ -62,7 +62,6 @@ public final class LiveEventBusCore {
     private boolean autoClear;
     private Context appContext;
     private Logger logger;
-    private final ExecutorService fixedThreadPool = Executors.newCachedThreadPool();
 
     /**
      * 跨进程通信
@@ -161,24 +160,8 @@ public final class LiveEventBusCore {
         }
 
         @Override
-        public void postDelay(final LifecycleOwner owner, final T value, final long delay) {
-            fixedThreadPool.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.d("LiveEventBusCore","Thread Name:" + Thread.currentThread().getName() + "  " + "Thread Id:"  + Thread.currentThread().getId());
-                        Thread.sleep(delay);
-                        if(owner!=null){
-                            if(owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
-                                mainHandler.post(new PostValueTask(value));
-                            }
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-
-                    }
-                }
-            });
+        public void postDelay(LifecycleOwner owner, final T value, long delay) {
+            mainHandler.postDelayed(new PostLifeValueTask(value,owner),delay);
         }
 
         @Override
@@ -372,6 +355,26 @@ public final class LiveEventBusCore {
                 postInternal((T) newValue);
             }
         }
+
+        private class PostLifeValueTask implements Runnable {
+            private Object newValue;
+            private LifecycleOwner owner;
+
+            public PostLifeValueTask(@NonNull Object newValue,@Nullable  LifecycleOwner owner) {
+                this.newValue = newValue;
+                this.owner = owner;
+            }
+
+            @Override
+            public void run() {
+                if(owner!=null){
+                    if(owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+                        postInternal((T) newValue);;
+                    }
+                }
+            }
+        }
+
     }
 
     private class ObserverWrapper<T> implements Observer<T> {

@@ -17,7 +17,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus;
 public class PostDelayActivity extends AppCompatActivity {
 
     ActivityPostDelayBinding binding;
-    private int sendCount = 50;
+    private int sendCount = 1000;
     private int receiveCount = 0;
     public static final String KEY_TEST_DELAY_LIFE_LONG = "key_test_delay_life_long";
 
@@ -35,11 +35,10 @@ public class PostDelayActivity extends AppCompatActivity {
                     @Override
                     public void onChanged(@Nullable String s) {
                         Toast.makeText(PostDelayActivity.this,
-                                " | receiveCount: " + receiveCount, Toast.LENGTH_SHORT).show();
+                                "receiveCount: " + receiveCount, Toast.LENGTH_SHORT).show();
                         receiveCount++;
                     }
                 });
-
     }
 
     public void  testDelayNoLife(View view){
