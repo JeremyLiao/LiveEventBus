@@ -13,7 +13,6 @@ import android.os.Looper;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
@@ -27,9 +26,6 @@ import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 
 /**
