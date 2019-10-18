@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.jeremyliao.lebapp.activity.ObserverActiveLevelActivity;
+import com.jeremyliao.lebapp.activity.PostDelayActivity;
 import com.jeremyliao.lebapp.activity.StickyActivity;
 import com.jeremyliao.lebapp.databinding.ActivityLiveDataBusDemoBinding;
 import com.jeremyliao.lebapp.service.IpcService;
@@ -33,11 +34,12 @@ public class LiveEventBusDemo extends AppCompatActivity {
     public static final String KEY_TEST_CLOSE_ALL_PAGE = "key_test_close_all_page";
     public static final String KEY_TEST_ACTIVE_LEVEL = "key_test_active_level";
     public static final String KEY_TEST_BROADCAST = "key_test_broadcast";
-
+    public static final String KEY_TEST_DELAY_LIFE = "key_test_delay_life";
 
     private int sendCount = 0;
     private int receiveCount = 0;
     private String randomKey = null;
+
 
     private ActivityLiveDataBusDemoBinding binding;
 
@@ -86,6 +88,16 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 });
         LiveEventBus
                 .get(KEY_TEST_ACTIVE_LEVEL, String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        Toast.makeText(LiveEventBusDemo.this, "Receive message: " + s,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        LiveEventBus
+                .get(KEY_TEST_DELAY_LIFE, String.class)
                 .observe(this, new Observer<String>() {
                     @Override
                     public void onChanged(@Nullable String s) {
@@ -229,4 +241,9 @@ public class LiveEventBusDemo extends AppCompatActivity {
                 .get(KEY_TEST_BROADCAST)
                 .broadcast("broadcast msg");
     }
+
+    public void testDelayLife() {
+        startActivity(new Intent(this, PostDelayActivity.class));
+    }
+
 }

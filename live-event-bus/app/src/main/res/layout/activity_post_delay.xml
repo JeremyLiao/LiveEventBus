@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="Handler"
+            type="com.jeremyliao.lebapp.activity.PostDelayActivity" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.jeremyliao.lebapp.activity.PostDelayActivity">
+
+        <Button
+            android:onClick="@{Handler::testDelayNoLife}"
+            android:text="发送延迟2s不带生命周期"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:onClick="@{Handler::testDelayWithLife}"
+            android:text="发送延迟2s带生命周期"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:onClick="@{Handler::testDelayWithLifeLast}"
+            android:text="连续多次发送延迟2s带生命周期"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </LinearLayout>
+</layout>
