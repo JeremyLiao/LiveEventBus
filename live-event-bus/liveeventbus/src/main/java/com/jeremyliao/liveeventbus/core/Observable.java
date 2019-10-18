@@ -32,16 +32,15 @@ public interface Observable<T> {
      */
     void postDelay(T value, long delay);
 
-
     /**
-     * 延迟发送一个消息，支持前台线程、后台线程发送,带生命监听
+     * 延迟发送一个消息，支持前台线程、后台线程发送，带生命周期
+     * 如果延时发送消息的时候sender处于非激活状态，消息取消发送
      *
-     * @param owner LifecycleOwner实现生命监听
+     * @param sender 消息发送者
      * @param value
-     * @param delay 延迟毫秒数
+     * @param delay  延迟毫秒数
      */
-    void postDelay(LifecycleOwner owner,T value, long delay);
-
+    void postDelay(LifecycleOwner sender, T value, long delay);
 
     /**
      * 发送一个消息，支持前台线程、后台线程发送

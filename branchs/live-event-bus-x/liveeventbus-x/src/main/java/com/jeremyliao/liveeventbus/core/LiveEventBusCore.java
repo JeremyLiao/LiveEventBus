@@ -157,6 +157,11 @@ public final class LiveEventBusCore {
         }
 
         @Override
+        public void postDelay(LifecycleOwner owner, final T value, long delay) {
+            mainHandler.postDelayed(new PostLifeValueTask(value, owner), delay);
+        }
+
+        @Override
         public void postOrderly(T value) {
             mainHandler.post(new PostValueTask(value));
         }
@@ -345,6 +350,25 @@ public final class LiveEventBusCore {
             @Override
             public void run() {
                 postInternal((T) newValue);
+            }
+        }
+
+        private class PostLifeValueTask implements Runnable {
+            private Object newValue;
+            private LifecycleOwner owner;
+
+            public PostLifeValueTask(@NonNull Object newValue, @Nullable LifecycleOwner owner) {
+                this.newValue = newValue;
+                this.owner = owner;
+            }
+
+            @Override
+            public void run() {
+                if (owner != null) {
+                    if (owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                        postInternal((T) newValue);
+                    }
+                }
             }
         }
     }

@@ -157,7 +157,7 @@ public final class LiveEventBusCore {
 
         @Override
         public void postDelay(LifecycleOwner owner, final T value, long delay) {
-            mainHandler.postDelayed(new PostLifeValueTask(value,owner),delay);
+            mainHandler.postDelayed(new PostLifeValueTask(value, owner), delay);
         }
 
         @Override
@@ -356,21 +356,20 @@ public final class LiveEventBusCore {
             private Object newValue;
             private LifecycleOwner owner;
 
-            public PostLifeValueTask(@NonNull Object newValue,@Nullable  LifecycleOwner owner) {
+            public PostLifeValueTask(@NonNull Object newValue, @Nullable LifecycleOwner owner) {
                 this.newValue = newValue;
                 this.owner = owner;
             }
 
             @Override
             public void run() {
-                if(owner!=null){
-                    if(owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
-                        postInternal((T) newValue);;
+                if (owner != null) {
+                    if (owner.getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+                        postInternal((T) newValue);
                     }
                 }
             }
         }
-
     }
 
     private class ObserverWrapper<T> implements Observer<T> {
