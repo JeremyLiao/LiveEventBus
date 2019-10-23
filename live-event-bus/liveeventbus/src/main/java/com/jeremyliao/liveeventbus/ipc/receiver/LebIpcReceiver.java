@@ -6,7 +6,6 @@ import android.content.Intent;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
 import com.jeremyliao.liveeventbus.ipc.IpcConst;
-import com.jeremyliao.liveeventbus.ipc.decode.DecodeException;
 import com.jeremyliao.liveeventbus.ipc.decode.IDecoder;
 import com.jeremyliao.liveeventbus.ipc.decode.ValueDecoder;
 import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
@@ -29,15 +28,15 @@ public class LebIpcReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (IpcConst.ACTION.equals(intent.getAction())) {
-            String key = intent.getStringExtra(IpcConst.KEY);
             try {
+                String key = intent.getStringExtra(IpcConst.KEY);
                 Object value = decoder.decode(intent);
                 if (key != null) {
                     LiveEventBus
                             .get(key)
                             .post(value);
                 }
-            } catch (DecodeException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
