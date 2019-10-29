@@ -392,6 +392,8 @@ public final class LiveEventBusCore {
             try {
                 observer.onChanged(t);
             } catch (ClassCastException e) {
+                logger.log(Level.WARNING, "class cast error on message received: " + t, e);
+            } catch (Exception e) {
                 logger.log(Level.WARNING, "error on message received: " + t, e);
             }
         }
