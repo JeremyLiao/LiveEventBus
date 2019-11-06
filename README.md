@@ -3,7 +3,7 @@
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
-![logo](/images/logo.png)
+![logo](https://user-images.githubusercontent.com/23290617/68295122-a6ccf600-00cc-11ea-934e-a849a097f5cd.png)
 
 ## LiveEventBus的特点
 - [x] 生命周期感知，消息随时订阅，自动取消订阅
