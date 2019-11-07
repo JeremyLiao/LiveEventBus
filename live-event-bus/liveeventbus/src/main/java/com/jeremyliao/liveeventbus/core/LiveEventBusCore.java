@@ -20,6 +20,7 @@ import com.jeremyliao.liveeventbus.ipc.encode.ValueEncoder;
 import com.jeremyliao.liveeventbus.ipc.json.GsonConverter;
 import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
+import com.jeremyliao.liveeventbus.logger.LoggerManager;
 import com.jeremyliao.liveeventbus.logger.DefaultLogger;
 import com.jeremyliao.liveeventbus.logger.Logger;
 import com.jeremyliao.liveeventbus.utils.ThreadUtils;
@@ -57,7 +58,7 @@ public final class LiveEventBusCore {
     private boolean lifecycleObserverAlwaysActive;
     private boolean autoClear;
     private Context appContext;
-    private Logger logger;
+    private LoggerManager logger;
 
     /**
      * 跨进程通信
@@ -69,7 +70,7 @@ public final class LiveEventBusCore {
         bus = new HashMap<>();
         lifecycleObserverAlwaysActive = true;
         autoClear = false;
-        logger = new DefaultLogger();
+        logger = new LoggerManager(new DefaultLogger());
         JsonConverter converter = new GsonConverter();
         encoder = new ValueEncoder(converter);
         receiver = new LebIpcReceiver(converter);
@@ -93,7 +94,11 @@ public final class LiveEventBusCore {
     }
 
     void setLogger(@NonNull Logger logger) {
-        this.logger = logger;
+        this.logger.setLogger(logger);
+    }
+
+    void enableLogger(boolean enable) {
+        this.logger.setEnable(enable);
     }
 
     void registerReceiver(Context context) {

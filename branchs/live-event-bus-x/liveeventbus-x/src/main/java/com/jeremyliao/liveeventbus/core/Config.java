@@ -69,4 +69,14 @@ public class Config {
         LiveEventBusCore.get().setLogger(logger);
         return this;
     }
+
+    /**
+     * set logger enable or disable, default enable
+     * @param enable
+     * @return
+     */
+    public Config enableLogger(boolean enable) {
+        LiveEventBusCore.get().enableLogger(enable);
+        return this;
+    }
 }
