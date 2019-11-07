@@ -20,11 +20,6 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
-
 public class LiveEventBusDemo extends AppCompatActivity {
     public static final String KEY_TEST_OBSERVE = "key_test_observe";
     public static final String KEY_TEST_OBSERVE_FOREVER = "key_test_observe_forever";
@@ -131,52 +126,18 @@ public class LiveEventBusDemo extends AppCompatActivity {
     }
 
     public void sendMsgByPostValue() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message By PostValue: " + random.nextInt(100);
-                    }
-                })
-                .subscribeOn(Schedulers.io())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveEventBus.get(KEY_TEST_OBSERVE).post(s);
-                    }
-                });
+        LiveEventBus.get(KEY_TEST_OBSERVE)
+                .post("Message By PostValue: " + new Random().nextInt(100));
     }
 
     public void sendMsgToForeverObserver() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message To ForeverObserver: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveEventBus.get(KEY_TEST_OBSERVE_FOREVER).post(s);
-                    }
-                });
+        LiveEventBus.get(KEY_TEST_OBSERVE_FOREVER)
+                .post("Message To ForeverObserver: " + new Random().nextInt(100));
     }
 
     public void sendMsgToStickyReceiver() {
-        Observable.just(new Random())
-                .map(new Func1<Random, String>() {
-                    @Override
-                    public String call(Random random) {
-                        return "Message Sticky: " + random.nextInt(100);
-                    }
-                })
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String s) {
-                        LiveEventBus.get(KEY_TEST_STICKY).post(s);
-                    }
-                });
+        LiveEventBus.get(KEY_TEST_STICKY)
+                .post("Message Sticky: " + new Random().nextInt(100));
     }
 
     public void startStickyActivity() {
