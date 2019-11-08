@@ -8,7 +8,7 @@ LiveEventBus
 ```
 - **supportBroadcast**
 
-配置支持跨进程、跨APP通信，传入Context
+配置支持跨进程、跨APP通信，传入Context，需要在application onCreate中配置
 
 - **lifecycleObserverAlwaysActive**
 
@@ -27,3 +27,7 @@ LiveEventBus
 - **setLogger**
 
 配置Logger（默认使用DefaultLogger）
+
+- **enableLogger**
+
+配置是否打印日志（默认打印日志）
