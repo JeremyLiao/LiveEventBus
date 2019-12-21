@@ -47,7 +47,18 @@ public class ValueDecoder implements IDecoder {
                 try {
                     String json = intent.getStringExtra(IpcConst.VALUE);
                     String className = intent.getStringExtra(IpcConst.CLASS_NAME);
-                    return jsonConverter.fromJson(json, Class.forName(className));
+                    Class<?> classType = null;
+                    try {
+                        classType = Class.forName(className);
+                    } catch (ClassNotFoundException e) {
+                        int last = className.lastIndexOf('.');
+                        if (last != -1) {
+                            String pn = className.substring(0, last);
+                            String cn = className.substring(last + 1);
+                            classType = Class.forName(pn + "$" + cn);
+                        }
+                    }
+                    return jsonConverter.fromJson(json, classType);
                 } catch (Exception e) {
                     throw new DecodeException(e);
                 }

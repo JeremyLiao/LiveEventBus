@@ -1,9 +1,9 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.3-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.7-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
-![logo](/images/logo.png)
+![logo](https://user-images.githubusercontent.com/23290617/68295122-a6ccf600-00cc-11ea-934e-a849a097f5cd.png)
 
 ## LiveEventBus的特点
 - [x] 生命周期感知，消息随时订阅，自动取消订阅
@@ -29,11 +29,11 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.5.3'
+implementation 'com.jeremyliao:live-event-bus:1.5.7'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.5.3'
+implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
 ```
 
 ## 配置

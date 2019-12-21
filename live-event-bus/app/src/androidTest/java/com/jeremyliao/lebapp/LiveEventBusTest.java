@@ -869,4 +869,34 @@ public class LiveEventBusTest {
             Assert.assertEquals(result.get(i).intValue(), i);
         }
     }
+
+    @Test
+    public void testExceptionOnReceiveMsg() throws Exception {
+        final String key = "key_test_exception_on_receive";
+        final Wrapper<Integer> counter = new Wrapper<>(0);
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus
+                        .get(key, Integer.class)
+                        .observe(rule.getActivity(), new Observer<Integer>() {
+                            @Override
+                            public void onChanged(@Nullable Integer s) {
+                                counter.setTarget(counter.getTarget() + 1);
+                                throw new RuntimeException();
+                            }
+                        });
+                for (int i = 0; i < 10; i++) {
+                    try {
+                        LiveEventBus
+                                .get(key, Integer.class)
+                                .post(i);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        });
+        Thread.sleep(1000);
+        Assert.assertEquals(counter.getTarget().intValue(), 10);
+    }
 }
