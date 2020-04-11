@@ -6,9 +6,6 @@ LiveEventBus
         .config()
         ...
 ```
-- **supportBroadcast**
-
-配置支持跨进程、跨APP通信，传入Context，需要在application onCreate中配置
 
 - **lifecycleObserverAlwaysActive**
 
@@ -31,3 +28,7 @@ LiveEventBus
 - **enableLogger**
 
 配置是否打印日志（默认打印日志）
+
+- **setContext**
+
+如果广播模式有问题，请手动传入Context，需要在application onCreate中配置
