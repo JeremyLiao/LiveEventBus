@@ -1,19 +1,25 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.5.7-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.6.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
 LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 
-![logo](https://user-images.githubusercontent.com/23290617/68295122-a6ccf600-00cc-11ea-934e-a849a097f5cd.png)
+![logo](https://user-images.githubusercontent.com/23290617/68295106-97e64380-00cc-11ea-919d-605f123ec084.png)
 
-## LiveEventBus的特点
-- [x] 生命周期感知，消息随时订阅，自动取消订阅
+## 为什么要用LiveEventBus
+##### 生命周期感知
+- [x] 消息随时订阅，自动取消订阅
+- [x] 告别消息总线造成的内存泄漏
+- [x] 告别生命周期造成的崩溃
+##### 范围全覆盖的消息总线解决方案
+- [x] 进程内消息发送
+- [x] App内，跨进程消息发送
+- [x] App之间的消息发送
+##### 更多特性支持
+- [x] 免配置直接使用，懒人最爱
 - [x] 支持Sticky粘性消息
 - [x] 支持AndroidX
-- [x] 支持跨进程通信
-- [x] 支持跨APP通信
-- [x] 支持设置LifecycleObserver（如Activity）接收消息的模式：
-1. 整个生命周期（从onCreate到onDestroy）都可以实时收到消息
-2. 激活状态（Started）可以实时收到消息，非激活状态（Stoped）无法实时收到消息，需等到Activity重新变成激活状态，方可收到消息
+- [x] 支持延迟发送
+- [x] 观察者的多种接收模式（全生命周期/激活状态可接受消息）
 
 ## 常用消息总线对比
 
@@ -29,34 +35,58 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.5.7'
+implementation 'com.jeremyliao:live-event-bus:1.6.0'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.5.7'
+implementation 'com.jeremyliao:live-event-bus-x:1.6.0'
 ```
-
-## 配置
-在Application.onCreate方法中配置：
-
-```
-LiveEventBus
-        .config()
-        ...
-```
-- **supportBroadcast**
-配置支持跨进程、跨APP通信
-
-- **lifecycleObserverAlwaysActive**
-配置LifecycleObserver（如Activity）接收消息的模式（默认值true）
-
-- **autoClear**
-配置在没有Observer关联的时候是否自动清除LiveEvent以释放内存（默认值false）
-
-#### 更多配置信息，请点击：[LiveEventBus的配置](docs/config.md)
 
 ## 使用方法
-#### 以生命周期感知模式订阅消息
+#### 多种消息发送方式
+##### 进程内发送消息
+- **post**
+
+```java
+LiveEventBus
+	.get("key_name")
+	.post(value);
+```
+##### App内发送消息，跨进程使用
+- **postAcrossProcess**
+
+```java
+LiveEventBus
+	.get("key_name")
+	.postAcrossProcess(value);
+```
+##### App之间发送消息
+- **postAcrossApp**
+
+```java
+LiveEventBus
+	.get("key_name")
+	.postAcrossApp(value);
+```
+##### 进程内发送消息，延迟发送
+- **postDelay**
+
+```java
+LiveEventBus
+	.get("key_name")
+	.postDelay(value, 1000);
+```
+##### 进程内发送消息，有序发送
+- **postOrderly**
+
+```java
+LiveEventBus
+	.get("key_name")
+	.postOrderly(value);
+```
+
+#### 订阅消息
+##### 以生命周期感知模式订阅消息
 - **observe**
 
 具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
@@ -71,7 +101,7 @@ LiveEventBus
 	});
 ```
 
-#### 以Forever模式订阅和取消订阅消息
+##### 以Forever模式订阅和取消订阅消息
 - **observeForever**
 
 Forever模式订阅消息，需要调用removeObserver取消订阅
@@ -82,9 +112,8 @@ LiveEventBus
 	.observeForever(observer);
 ```
 
+##### 取消订阅消息
 - **removeObserver**
-
-取消订阅消息
 
 ```java
 LiveEventBus
@@ -92,53 +121,12 @@ LiveEventBus
 	.removeObserver(observer);
 ```
 
-#### 发送消息
-- **post**
+##### Sticky模式
 
-发送一个消息，支持前台线程、后台线程发送
-
-```java
-LiveEventBus
-	.get("key_name")
-	.post(value);
-```
-
-- **postDelay**
-
-延迟发送一个消息，支持前台线程、后台线程发送
-
-```java
-LiveEventBus
-	.get("key_name")
-	.postDelay(value, 1000);
-```
-
-#### 跨进程、跨APP发送消息
-- **broadcast**
-
-跨进程、跨APP发送消息，支持前台线程、后台线程发送。需要设置supportBroadcast
-
-```java
-LiveEventBus
-        .get("key_name")
-        .broadcast(value);
-```
-
-以前台队列的形式发送跨进程消息
-
-```java
-LiveEventBus
-        .get("key_name")
-        .broadcast(value, true);
-```
-
-#### Sticky模式
 支持在订阅消息的时候设置Sticky模式，这样订阅者可以接收到之前发送的消息。
-
 - **observeSticky**
 
 以Sticky模式订阅消息，具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
-
 ```java
 LiveEventBus
         .get("sticky_key", String.class)
@@ -151,7 +139,6 @@ LiveEventBus
 - **observeStickyForever**
 
 Forever模式订阅消息，需要调用removeObserver取消订阅，Sticky模式
-
 ```java
 LiveEventBus
         .get("sticky_key", String.class)
@@ -159,6 +146,23 @@ LiveEventBus
 ```
 -  如果使用1.4.X版本，请参考[使用方法](docs/DIRECTION_1_4.md)
 -  如果使用1.3.X及以下版本，请参考[使用方法](docs/DIRECTION_1_3.md)
+
+## 配置
+在Application.onCreate方法中配置：
+
+```
+LiveEventBus
+        .config()
+        ...
+```
+
+- **lifecycleObserverAlwaysActive**
+配置LifecycleObserver（如Activity）接收消息的模式（默认值true）
+
+- **autoClear**
+配置在没有Observer关联的时候是否自动清除LiveEvent以释放内存（默认值false）
+
+#### 更多配置信息，请点击：[LiveEventBus的配置](docs/config.md)
 
 ## 混淆规则
 
