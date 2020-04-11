@@ -602,7 +602,7 @@ public class LiveEventBusTest {
         Thread.sleep(500);
         LiveEventBus
                 .get(key, String.class)
-                .broadcast("value_test_broadcast_value", true);
+                .broadcast("value_test_broadcast_value", true, false);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget(), "value_test_broadcast_value");
     }
@@ -898,5 +898,55 @@ public class LiveEventBusTest {
         });
         Thread.sleep(1000);
         Assert.assertEquals(counter.getTarget().intValue(), 10);
+    }
+
+    @Test
+    public void testBroadcastStringValueInApp() throws Exception {
+        final String key = "key_test_broadcast_string";
+        final Wrapper<String> wrapper = new Wrapper<>(null);
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus
+                        .get(key, String.class)
+                        .observe(rule.getActivity(), new Observer<String>() {
+                            @Override
+                            public void onChanged(@Nullable String s) {
+                                wrapper.setTarget(s);
+                            }
+                        });
+            }
+        });
+        Thread.sleep(500);
+        LiveEventBus
+                .get(key, String.class)
+                .postAcrossProcess("value_test_broadcast_value");
+        Thread.sleep(500);
+        Assert.assertEquals(wrapper.getTarget(), "value_test_broadcast_value");
+    }
+
+    @Test
+    public void testBroadcastStringValueGlobal() throws Exception {
+        final String key = "key_test_broadcast_string";
+        final Wrapper<String> wrapper = new Wrapper<>(null);
+        rule.getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                LiveEventBus
+                        .get(key, String.class)
+                        .observe(rule.getActivity(), new Observer<String>() {
+                            @Override
+                            public void onChanged(@Nullable String s) {
+                                wrapper.setTarget(s);
+                            }
+                        });
+            }
+        });
+        Thread.sleep(500);
+        LiveEventBus
+                .get(key, String.class)
+                .postAcrossApp("value_test_broadcast_value");
+        Thread.sleep(500);
+        Assert.assertEquals(wrapper.getTarget(), "value_test_broadcast_value");
     }
 }

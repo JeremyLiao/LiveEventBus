@@ -14,7 +14,6 @@ public class DemoApplication extends Application {
         super.onCreate();
         LiveEventBus
                 .config()
-                .supportBroadcast(this)
                 .lifecycleObserverAlwaysActive(true);
     }
 }

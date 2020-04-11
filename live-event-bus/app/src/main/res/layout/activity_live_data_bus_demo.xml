@@ -110,6 +110,20 @@
                 android:gravity="center"
                 android:onClick="@{()->handler.testDelayLife()}"
                 android:text="测试延迟发送带生命周期" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:onClick="@{()->handler.testBroadcastInApp()}"
+                android:text="发送App内广播" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:onClick="@{()->handler.testBroadcastGlobal()}"
+                android:text="发送全局广播" />
         </LinearLayout>
     </ScrollView>
 </layout>

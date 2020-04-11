@@ -16,6 +16,6 @@ public class AppUtilsTest {
 
     @Test
     public void testGetApplicationContext() throws Exception {
-        Assert.assertNotNull(AppUtils.getApplicationContext());
+        Assert.assertNotNull(AppUtils.getApp());
     }
 }
