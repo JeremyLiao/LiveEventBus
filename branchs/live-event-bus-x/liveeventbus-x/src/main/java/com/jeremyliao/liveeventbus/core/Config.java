@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 import com.jeremyliao.liveeventbus.logger.Logger;
+import com.jeremyliao.liveeventbus.utils.AppUtils;
 
 /**
  * Created by liaohailiang on 2019-08-28.
@@ -43,8 +44,9 @@ public class Config {
      * @param context
      * @return
      */
-    public Config supportBroadcast(Context context) {
-        LiveEventBusCore.get().registerReceiver(context);
+    public Config setContext(Context context) {
+        AppUtils.init(context);
+        LiveEventBusCore.get().registerReceiver();
         return this;
     }
 
@@ -72,6 +74,7 @@ public class Config {
 
     /**
      * set logger enable or disable, default enable
+     *
      * @param enable
      * @return
      */

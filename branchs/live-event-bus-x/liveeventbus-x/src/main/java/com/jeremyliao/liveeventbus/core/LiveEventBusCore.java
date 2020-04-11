@@ -1,5 +1,6 @@
 package com.jeremyliao.liveeventbus.core;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -24,6 +25,7 @@ import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
 import com.jeremyliao.liveeventbus.logger.DefaultLogger;
 import com.jeremyliao.liveeventbus.logger.Logger;
 import com.jeremyliao.liveeventbus.logger.LoggerManager;
+import com.jeremyliao.liveeventbus.utils.AppUtils;
 import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
 import java.util.HashMap;
@@ -58,7 +60,6 @@ public final class LiveEventBusCore {
     private final Config config = new Config();
     private boolean lifecycleObserverAlwaysActive;
     private boolean autoClear;
-    private Context appContext;
     private LoggerManager logger;
 
     /**
@@ -66,6 +67,7 @@ public final class LiveEventBusCore {
      */
     private IEncoder encoder;
     private LebIpcReceiver receiver;
+    private boolean isRegisterReceiver = false;
 
     private LiveEventBusCore() {
         bus = new HashMap<>();
@@ -75,6 +77,7 @@ public final class LiveEventBusCore {
         JsonConverter converter = new GsonConverter();
         encoder = new ValueEncoder(converter);
         receiver = new LebIpcReceiver(converter);
+        registerReceiver();
     }
 
     public synchronized <T> Observable<T> with(String key, Class<T> type) {
@@ -102,14 +105,16 @@ public final class LiveEventBusCore {
         this.logger.setEnable(enable);
     }
 
-    void registerReceiver(Context context) {
-        if (context != null) {
-            appContext = context.getApplicationContext();
+    void registerReceiver() {
+        if (isRegisterReceiver) {
+            return;
         }
-        if (appContext != null) {
+        Application application = AppUtils.getApp();
+        if (application != null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(IpcConst.ACTION);
-            appContext.registerReceiver(receiver, intentFilter);
+            application.registerReceiver(receiver, intentFilter);
+            isRegisterReceiver = true;
         }
     }
 
@@ -142,6 +147,11 @@ public final class LiveEventBusCore {
             this.liveData = new LifecycleLiveData<>();
         }
 
+        /**
+         * 进程内发送消息
+         *
+         * @param value 发送的消息
+         */
         @Override
         public void post(T value) {
             if (ThreadUtils.isMainThread()) {
@@ -151,36 +161,90 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * App内发送消息，跨进程使用
+         *
+         * @param value 发送的消息
+         */
         @Override
-        public void broadcast(T value) {
-            broadcast(value, false);
+        public void postAcrossProcess(T value) {
+            broadcast(value, false, true);
         }
 
+        /**
+         * App之间发送消息
+         *
+         * @param value 发送的消息
+         */
+        @Override
+        public void postAcrossApp(T value) {
+            broadcast(value, false, false);
+        }
+
+        /**
+         * 进程内发送消息，延迟发送
+         *
+         * @param value 发送的消息
+         * @param delay 延迟毫秒数
+         */
         @Override
         public void postDelay(T value, long delay) {
             mainHandler.postDelayed(new PostValueTask(value), delay);
         }
 
+        /**
+         * 进程内发送消息，延迟发送，带生命周期
+         * 如果延时发送消息的时候sender处于非激活状态，消息取消发送
+         *
+         * @param owner 消息发送者
+         * @param value 发送的消息
+         * @param delay 延迟毫秒数
+         */
         @Override
         public void postDelay(LifecycleOwner owner, final T value, long delay) {
             mainHandler.postDelayed(new PostLifeValueTask(value, owner), delay);
         }
 
+        /**
+         * 进程内发送消息
+         * 强制接收到消息的顺序和发送顺序一致
+         *
+         * @param value 发送的消息
+         */
         @Override
         public void postOrderly(T value) {
             mainHandler.post(new PostValueTask(value));
         }
 
+        /**
+         * App之间发送消息
+         *
+         * @param value 发送的消息
+         */
         @Override
-        public void broadcast(final T value, final boolean foreground) {
-            if (appContext != null) {
+        @Deprecated
+        public void broadcast(T value) {
+            broadcast(value, false, false);
+        }
+
+        /**
+         * 以广播的形式发送一个消息
+         * 需要跨进程、跨APP发送消息的时候调用该方法
+         *
+         * @param value      发送的消息
+         * @param foreground true:前台广播、false:后台广播
+         * @param onlyInApp  true:只在APP内有效、false:全局有效
+         */
+        @Override
+        public void broadcast(final T value, final boolean foreground, final boolean onlyInApp) {
+            if (AppUtils.getApp() != null) {
                 if (ThreadUtils.isMainThread()) {
-                    broadcastInternal(value, foreground);
+                    broadcastInternal(value, foreground, onlyInApp);
                 } else {
                     mainHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            broadcastInternal(value, foreground);
+                            broadcastInternal(value, foreground, onlyInApp);
                         }
                     });
                 }
@@ -189,6 +253,12 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * 注册一个Observer，生命周期感知，自动取消订阅
+         *
+         * @param owner    LifecycleOwner
+         * @param observer 观察者
+         */
         @Override
         public void observe(@NonNull final LifecycleOwner owner, @NonNull final Observer<T> observer) {
             if (ThreadUtils.isMainThread()) {
@@ -203,6 +273,13 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * 注册一个Observer，生命周期感知，自动取消订阅
+         * 如果之前有消息发送，可以在注册时收到消息（消息同步）
+         *
+         * @param owner    LifecycleOwner
+         * @param observer 观察者
+         */
         @Override
         public void observeSticky(@NonNull final LifecycleOwner owner, @NonNull final Observer<T> observer) {
             if (ThreadUtils.isMainThread()) {
@@ -217,6 +294,11 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * 注册一个Observer，需手动解除绑定
+         *
+         * @param observer 观察者
+         */
         @Override
         public void observeForever(@NonNull final Observer<T> observer) {
             if (ThreadUtils.isMainThread()) {
@@ -231,6 +313,12 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * 注册一个Observer，需手动解除绑定
+         * 如果之前有消息发送，可以在注册时收到消息（消息同步）
+         *
+         * @param observer 观察者
+         */
         @Override
         public void observeStickyForever(@NonNull final Observer<T> observer) {
             if (ThreadUtils.isMainThread()) {
@@ -245,6 +333,11 @@ public final class LiveEventBusCore {
             }
         }
 
+        /**
+         * 通过observeForever或observeStickyForever注册的，需要调用该方法取消订阅
+         *
+         * @param observer 观察者
+         */
         @Override
         public void removeObserver(@NonNull final Observer<T> observer) {
             if (ThreadUtils.isMainThread()) {
@@ -266,17 +359,25 @@ public final class LiveEventBusCore {
         }
 
         @MainThread
-        private void broadcastInternal(T value, boolean foreground) {
+        private void broadcastInternal(T value, boolean foreground, boolean onlyInApp) {
             logger.log(Level.INFO, "broadcast: " + value + " foreground: " + foreground +
                     " with key: " + key);
+            Application application = AppUtils.getApp();
+            if (application == null) {
+                logger.log(Level.WARNING, "application is null, you can try setContext() when config");
+                return;
+            }
             Intent intent = new Intent(IpcConst.ACTION);
             if (foreground && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             }
+            if (onlyInApp) {
+                intent.setPackage(application.getPackageName());
+            }
             intent.putExtra(IpcConst.KEY, key);
             try {
                 encoder.encode(intent, value);
-                appContext.sendBroadcast(intent);
+                application.sendBroadcast(intent);
             } catch (Exception e) {
                 e.printStackTrace();
             }
