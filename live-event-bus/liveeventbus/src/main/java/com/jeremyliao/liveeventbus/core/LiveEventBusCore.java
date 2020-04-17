@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.ExternalLiveData;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -26,6 +27,8 @@ import com.jeremyliao.liveeventbus.logger.Logger;
 import com.jeremyliao.liveeventbus.utils.AppUtils;
 import com.jeremyliao.liveeventbus.utils.ThreadUtils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -66,6 +69,11 @@ public final class LiveEventBusCore {
     private IEncoder encoder;
     private LebIpcReceiver receiver;
     private boolean isRegisterReceiver = false;
+
+    /**
+     * 调试
+     */
+    final InnerConsole console = new InnerConsole();
 
     private LiveEventBusCore() {
         bus = new HashMap<>();
@@ -500,6 +508,80 @@ public final class LiveEventBusCore {
                 logger.log(Level.WARNING, "class cast error on message received: " + t, e);
             } catch (Exception e) {
                 logger.log(Level.WARNING, "error on message received: " + t, e);
+            }
+        }
+    }
+
+    class InnerConsole {
+
+        String getConsoleInfo() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("*********Base info*********").append("\n");
+            sb.append(getBaseInfo());
+            sb.append("*********Event info*********").append("\n");
+            sb.append(getBusInfo());
+            return sb.toString();
+        }
+
+        String getBaseInfo() {
+            StringBuilder sb = new StringBuilder();
+            sb.append("lifecycleObserverAlwaysActive: ").append(lifecycleObserverAlwaysActive).append("\n")
+                    .append("autoClear: ").append(autoClear).append("\n")
+                    .append("logger enable: ").append(logger.isEnable()).append("\n")
+                    .append("logger: ").append(logger.getLogger()).append("\n")
+                    .append("Receiver register: ").append(isRegisterReceiver).append("\n")
+                    .append("Application: ").append(AppUtils.getApp()).append("\n");
+            return sb.toString();
+        }
+
+        String getBusInfo() {
+            StringBuilder sb = new StringBuilder();
+            for (String key : bus.keySet()) {
+                sb.append("Event name: " + key).append("\n");
+                ExternalLiveData liveData = bus.get(key).liveData;
+                sb.append("\tversion: " + liveData.getVersion()).append("\n");
+                sb.append("\thasActiveObservers: " + liveData.hasActiveObservers()).append("\n");
+                sb.append("\thasObservers: " + liveData.hasObservers()).append("\n");
+                sb.append("\tActiveCount: " + getActiveCount(liveData)).append("\n");
+                sb.append("\tObserverCount: " + getObserverCount(liveData)).append("\n");
+                sb.append("\tObservers: ").append("\n");
+                sb.append("\t\t" + getObserverInfo(liveData)).append("\n");
+            }
+            return sb.toString();
+        }
+
+        private int getActiveCount(LiveData liveData) {
+            try {
+                Field field = LiveData.class.getDeclaredField("mActiveCount");
+                field.setAccessible(true);
+                return (int) field.get(liveData);
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
+        private int getObserverCount(LiveData liveData) {
+            try {
+                Field field = LiveData.class.getDeclaredField("mObservers");
+                field.setAccessible(true);
+                Object mObservers = field.get(liveData);
+                Class<?> classOfSafeIterableMap = mObservers.getClass();
+                Method size = classOfSafeIterableMap.getDeclaredMethod("size");
+                size.setAccessible(true);
+                return (int) size.invoke(mObservers);
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
+        private String getObserverInfo(LiveData liveData) {
+            try {
+                Field field = LiveData.class.getDeclaredField("mObservers");
+                field.setAccessible(true);
+                Object mObservers = field.get(liveData);
+                return mObservers.toString();
+            } catch (Exception e) {
+                return "";
             }
         }
     }
