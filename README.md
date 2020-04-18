@@ -1,7 +1,7 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.6.0-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.6.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
-LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.6.0:new::tada::tada:）
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.6.1:new::tada::tada:）
 
 ![logo](https://user-images.githubusercontent.com/23290617/68295106-97e64380-00cc-11ea-919d-605f123ec084.png)
 
@@ -35,11 +35,11 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.6.0'
+implementation 'com.jeremyliao:live-event-bus:1.6.1'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.6.0'
+implementation 'com.jeremyliao:live-event-bus-x:1.6.1'
 ```
 
 ## 使用方法
@@ -165,7 +165,6 @@ LiveEventBus
 #### 更多配置信息，请点击：[LiveEventBus的配置](docs/config.md)
 
 ## 混淆规则
-
 ```
 -dontwarn com.jeremyliao.liveeventbus.**
 -keep class com.jeremyliao.liveeventbus.** { *; }
@@ -179,6 +178,8 @@ for androidx:
 -keep class androidx.lifecycle.** { *; }
 -keep class androidx.arch.core.** { *; }
 ```
+## 遇到问题？
+如果遇到了一些使用上的问题（如收不到消息等），在版本1.6.1+上可以使用控制台辅助类Console获取LiveEventBus的内部信息，详见：：[Console的使用](docs/console.md)。若问题不能解决，请提issue。
 
 ## 其他分支版本
 #### [AndroidX](/branchs/live-event-bus-x/liveeventbus-x/src/main/java/com/jeremyliao/liveeventbus)
