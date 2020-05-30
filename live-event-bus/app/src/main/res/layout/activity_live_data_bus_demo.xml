@@ -124,6 +124,13 @@
                 android:gravity="center"
                 android:onClick="@{()->handler.testBroadcastGlobal()}"
                 android:text="发送全局广播" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:onClick="@{()->handler.sendDemoEvent()}"
+                android:text="发送DemoEvent" />
         </LinearLayout>
     </ScrollView>
 </layout>

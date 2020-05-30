@@ -104,6 +104,13 @@
                 android:onClick="@{()->handler.testBroadcast()}"
                 android:text="测试跨进程发送消息" />
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:onClick="@{()->handler.sendDemoEvent()}"
+                android:text="发送DemoEvent" />
+
         </LinearLayout>
     </ScrollView>
 </layout>

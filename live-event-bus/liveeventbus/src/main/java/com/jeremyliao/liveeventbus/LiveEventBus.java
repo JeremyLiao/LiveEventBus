@@ -1,6 +1,9 @@
 package com.jeremyliao.liveeventbus;
 
+import android.support.annotation.NonNull;
+
 import com.jeremyliao.liveeventbus.core.Config;
+import com.jeremyliao.liveeventbus.core.LiveEvent;
 import com.jeremyliao.liveeventbus.core.LiveEventBusCore;
 import com.jeremyliao.liveeventbus.core.Observable;
 
@@ -25,9 +28,9 @@ public final class LiveEventBus {
      * @param key
      * @param type
      * @param <T>
-     * @return
+     * @return Observable<T>
      */
-    public static <T> Observable<T> get(String key, Class<T> type) {
+    public static <T> Observable<T> get(@NonNull String key, @NonNull Class<T> type) {
         return LiveEventBusCore.get().with(key, type);
     }
 
@@ -35,10 +38,21 @@ public final class LiveEventBus {
      * get observable by key
      *
      * @param key
-     * @return
+     * @return Observable<Object>
      */
-    public static Observable<Object> get(String key) {
+    public static Observable<Object> get(@NonNull String key) {
         return get(key, Object.class);
+    }
+
+    /**
+     * get observable from eventType
+     *
+     * @param eventType
+     * @param <T>
+     * @return Observable<T>
+     */
+    public static <T extends LiveEvent> Observable<T> get(@NonNull Class<T> eventType) {
+        return get(eventType.getName(), eventType);
     }
 
     /**

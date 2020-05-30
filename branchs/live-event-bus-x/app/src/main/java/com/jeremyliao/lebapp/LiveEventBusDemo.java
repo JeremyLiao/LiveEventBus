@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer;
 import com.jeremyliao.lebapp.activity.ObserverActiveLevelActivity;
 import com.jeremyliao.lebapp.activity.StickyActivity;
 import com.jeremyliao.lebapp.databinding.ActivityLiveDataBusDemoBinding;
+import com.jeremyliao.lebapp.event.DemoEvent;
 import com.jeremyliao.lebapp.service.IpcService;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 
@@ -87,6 +88,14 @@ public class LiveEventBusDemo extends AppCompatActivity {
                     public void onChanged(@Nullable String s) {
                         Toast.makeText(LiveEventBusDemo.this, "Receive message: " + s,
                                 Toast.LENGTH_SHORT).show();
+                    }
+                });
+        LiveEventBus.get(DemoEvent.class)
+                .observe(this, new Observer<DemoEvent>() {
+                    @Override
+                    public void onChanged(@Nullable DemoEvent demoEvent) {
+                        Toast.makeText(LiveEventBusDemo.this, "Receive message: " +
+                                demoEvent.content, Toast.LENGTH_SHORT).show();
                     }
                 });
         testMessageSetBeforeOnCreate();
@@ -190,5 +199,11 @@ public class LiveEventBusDemo extends AppCompatActivity {
         LiveEventBus
                 .get(KEY_TEST_BROADCAST)
                 .broadcast("broadcast msg");
+    }
+
+    public void sendDemoEvent() {
+        LiveEventBus
+                .get(DemoEvent.class)
+                .post(new DemoEvent("Hello world"));
     }
 }
