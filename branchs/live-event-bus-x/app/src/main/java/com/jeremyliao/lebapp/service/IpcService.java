@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 
+import com.jeremyliao.lebapp.LiveEventBusDemo;
 import com.jeremyliao.liveeventbus.LiveEventBus;
 
 /**
@@ -19,7 +20,7 @@ public class IpcService extends Service {
     public void onCreate() {
         super.onCreate();
         LiveEventBus
-                .get("key_test_broadcast", String.class)
+                .get(LiveEventBusDemo.KEY_TEST_BROADCAST, String.class)
                 .observeForever(observer);
     }
 
@@ -27,7 +28,7 @@ public class IpcService extends Service {
     public void onDestroy() {
         super.onDestroy();
         LiveEventBus
-                .get("key_test_broadcast", String.class)
+                .get(LiveEventBusDemo.KEY_TEST_BROADCAST, String.class)
                 .removeObserver(observer);
     }
 

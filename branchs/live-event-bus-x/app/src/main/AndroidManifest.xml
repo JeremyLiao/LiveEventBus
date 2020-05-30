@@ -20,6 +20,10 @@
         <activity android:name="com.jeremyliao.lebapp.activity.TestActivity" />
         <activity android:name=".activity.ObserverActiveLevelActivity" />
 
+        <activity
+            android:name=".activity.IpcTestActivity"
+            android:process=":ipcTest" />
+
         <service
             android:name=".service.IpcService"
             android:process=":ipcTest" />

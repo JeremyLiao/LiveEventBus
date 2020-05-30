@@ -1,7 +1,6 @@
 package com.jeremyliao.liveeventbus.core;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -17,11 +16,8 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 
-import com.jeremyliao.liveeventbus.ipc.IpcConst;
-import com.jeremyliao.liveeventbus.ipc.encode.IEncoder;
-import com.jeremyliao.liveeventbus.ipc.encode.ValueEncoder;
-import com.jeremyliao.liveeventbus.ipc.json.GsonConverter;
-import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
+import com.jeremyliao.liveeventbus.ipc.consts.IpcConst;
+import com.jeremyliao.liveeventbus.ipc.core.ProcessorManager;
 import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
 import com.jeremyliao.liveeventbus.logger.DefaultLogger;
 import com.jeremyliao.liveeventbus.logger.Logger;
@@ -68,7 +64,6 @@ public final class LiveEventBusCore {
     /**
      * 跨进程通信
      */
-    private IEncoder encoder;
     private LebIpcReceiver receiver;
     private boolean isRegisterReceiver = false;
 
@@ -82,9 +77,7 @@ public final class LiveEventBusCore {
         lifecycleObserverAlwaysActive = true;
         autoClear = false;
         logger = new LoggerManager(new DefaultLogger());
-        JsonConverter converter = new GsonConverter();
-        encoder = new ValueEncoder(converter);
-        receiver = new LebIpcReceiver(converter);
+        receiver = new LebIpcReceiver();
         registerReceiver();
     }
 
@@ -124,14 +117,6 @@ public final class LiveEventBusCore {
             application.registerReceiver(receiver, intentFilter);
             isRegisterReceiver = true;
         }
-    }
-
-    void setJsonConverter(JsonConverter jsonConverter) {
-        if (jsonConverter == null) {
-            return;
-        }
-        this.encoder = new ValueEncoder(jsonConverter);
-        this.receiver.setJsonConverter(jsonConverter);
     }
 
     void setLifecycleObserverAlwaysActive(boolean lifecycleObserverAlwaysActive) {
@@ -383,9 +368,11 @@ public final class LiveEventBusCore {
                 intent.setPackage(application.getPackageName());
             }
             intent.putExtra(IpcConst.KEY, key);
+            boolean handle = ProcessorManager.getManager().writeTo(intent, value);
             try {
-                encoder.encode(intent, value);
-                application.sendBroadcast(intent);
+                if (handle) {
+                    application.sendBroadcast(intent);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -1,8 +1,12 @@
 package com.jeremyliao.lebapp.obj;
 
+import com.jeremyliao.liveeventbus.ipc.annotation.IpcConfig;
+import com.jeremyliao.liveeventbus.ipc.core.GsonProcessor;
+
 /**
  * Created by liaohailiang on 2019/3/26.
  */
+@IpcConfig(processor = GsonProcessor.class)
 public class GoodBean {
 
     private int intValue;

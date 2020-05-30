@@ -11,7 +11,6 @@ import androidx.test.runner.AndroidJUnit4;
 
 import com.jeremyliao.lebapp.activity.TestActivity;
 import com.jeremyliao.lebapp.helper.LiveEventBusTestHelper;
-import com.jeremyliao.lebapp.obj.BadBean;
 import com.jeremyliao.lebapp.obj.GoodBean;
 import com.jeremyliao.lebapp.obj.SerializableObject;
 import com.jeremyliao.lebapp.wrapper.Wrapper;
@@ -551,33 +550,6 @@ public class LiveEventBusTest {
         GoodBean bean = new GoodBean(100, "hello");
         LiveEventBus
                 .get(key, GoodBean.class)
-                .broadcast(bean);
-        Thread.sleep(500);
-        Assert.assertEquals(wrapper.getTarget().getIntValue(), 100);
-        Assert.assertEquals(wrapper.getTarget().getStrValue(), "hello");
-    }
-
-    @Test
-    public void testBroadcastBadBeanValue() throws Exception {
-        final String key = "key_test_broadcast_bad_bean";
-        final Wrapper<BadBean> wrapper = new Wrapper<>(null);
-        rule.getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                LiveEventBus
-                        .get(key, BadBean.class)
-                        .observe(rule.getActivity(), new Observer<BadBean>() {
-                            @Override
-                            public void onChanged(@Nullable BadBean s) {
-                                wrapper.setTarget(s);
-                            }
-                        });
-            }
-        });
-        Thread.sleep(500);
-        BadBean bean = new BadBean(100, "hello");
-        LiveEventBus
-                .get(key, BadBean.class)
                 .broadcast(bean);
         Thread.sleep(500);
         Assert.assertEquals(wrapper.getTarget().getIntValue(), 100);

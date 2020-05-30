@@ -1,5 +1,6 @@
 package com.jeremyliao.lebapp.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -14,6 +15,7 @@ public class TestActivity extends AppCompatActivity {
     public static final String KEY_TEST_OBSERVE_FOREVER = "key_test_observe_forever";
     public static final String KEY_TEST_MULTI_THREAD_POST = "key_test_multi_thread_post";
     public static final String KEY_TEST_MSG_SET_BEFORE_ON_CREATE = "key_test_msg_set_before_on_create";
+    public static final String KEY_TEST_BROADCAST_VALUE = "key_test_broadcast_value";
 
     public boolean receiveMsgSetBeforeOnCreate = false;
     public String strResult = null;
@@ -48,6 +50,14 @@ public class TestActivity extends AppCompatActivity {
                         receiveCount++;
                     }
                 });
+        LiveEventBus
+                .get(KEY_TEST_BROADCAST_VALUE, String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        strResult = s;
+                    }
+                });
         testMessageSetBeforeOnCreate();
     }
 
@@ -70,5 +80,13 @@ public class TestActivity extends AppCompatActivity {
         LiveEventBus
                 .get(KEY_TEST_OBSERVE_FOREVER, String.class)
                 .removeObserver(observer);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == IpcTestActivity.RESULT_CODE) {
+            strResult = data.getStringExtra(IpcTestActivity.RESULT_EXTRA_KEY);
+        }
     }
 }
