@@ -1,7 +1,7 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.6.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.7.2-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
-LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.7.1:new::tada::tada:）
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.7.2:new::tada::tada:）
 
 ![logo](https://user-images.githubusercontent.com/23290617/68295106-97e64380-00cc-11ea-919d-605f123ec084.png)
 
@@ -35,11 +35,11 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.7.1'
+implementation 'com.jeremyliao:live-event-bus:1.7.2'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.7.1'
+implementation 'com.jeremyliao:live-event-bus-x:1.7.2'
 ```
 
 ## 快速开始
