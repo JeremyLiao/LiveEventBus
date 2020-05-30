@@ -1,7 +1,7 @@
 # LiveEventBus
 ![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.6.1-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
 
-LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.6.1:new::tada::tada:）
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.7.1:new::tada::tada:）
 
 ![logo](https://user-images.githubusercontent.com/23290617/68295106-97e64380-00cc-11ea-919d-605f123ec084.png)
 
@@ -35,62 +35,99 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 Via Gradle:
 
 ```
-implementation 'com.jeremyliao:live-event-bus:1.6.1'
+implementation 'com.jeremyliao:live-event-bus:1.7.1'
 ```
 For AndroidX:
 ```
-implementation 'com.jeremyliao:live-event-bus-x:1.6.1'
+implementation 'com.jeremyliao:live-event-bus-x:1.7.1'
 ```
 
-## 使用方法
-#### 多种消息发送方式
-##### 进程内发送消息
-- **post**
+## 快速开始
+### 订阅消息
+- 以生命周期感知模式订阅消息
+```java
+LiveEventBus
+	.get("some_key", String.class)
+	.observe(this, new Observer<String>() {
+	    @Override
+	    public void onChanged(@Nullable String s) {
+	    }
+	});
+```
 
+- 以Forever模式订阅消息
+
+```java
+LiveEventBus
+	.get("some_key", String.class)
+	.observeForever(observer);
+```
+### 发送消息
+- 不定义消息直接发送
+```java
+LiveEventBus
+	.get("some_key")
+	.post(some_value);
+```
+
+- 先定义消息，再发送消息
+
+```
+public class DemoEvent implements LiveEvent {
+    public final String content;
+
+    public DemoEvent(String content) {
+        this.content = content;
+    }
+}
+```
+
+```
+LiveEventBus
+        .get(DemoEvent.class)
+        .post(new DemoEvent("Hello world"));
+```
+
+## 接口使用文档
+##### post
+- 进程内发送消息
 ```java
 LiveEventBus
 	.get("key_name")
 	.post(value);
 ```
-##### App内发送消息，跨进程使用
-- **postAcrossProcess**
-
+##### postAcrossProcess
+- App内发送消息，跨进程使用
 ```java
 LiveEventBus
 	.get("key_name")
 	.postAcrossProcess(value);
 ```
-##### App之间发送消息
-- **postAcrossApp**
-
+##### postAcrossApp
+- App之间发送消息
 ```java
 LiveEventBus
 	.get("key_name")
 	.postAcrossApp(value);
 ```
-##### 进程内发送消息，延迟发送
-- **postDelay**
-
+##### postDelay
+- 进程内发送消息，延迟发送
 ```java
 LiveEventBus
 	.get("key_name")
 	.postDelay(value, 1000);
 ```
-##### 进程内发送消息，有序发送
-- **postOrderly**
-
+##### postOrderly
+- 进程内发送消息，有序发送
 ```java
 LiveEventBus
 	.get("key_name")
 	.postOrderly(value);
 ```
 
-#### 订阅消息
-##### 以生命周期感知模式订阅消息
-- **observe**
-
-具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
-
+##### observe
+- 以生命周期感知模式订阅消息
+- 具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
 ```java
 LiveEventBus
 	.get("key_name", String.class)
@@ -101,32 +138,27 @@ LiveEventBus
 	});
 ```
 
-##### 以Forever模式订阅和取消订阅消息
-- **observeForever**
-
-Forever模式订阅消息，需要调用removeObserver取消订阅
-
+##### observeForever
+- 以Forever模式订阅和取消订阅消息
+- Forever模式订阅消息，需要调用removeObserver取消订阅
 ```java
 LiveEventBus
 	.get("key_name", String.class)
 	.observeForever(observer);
 ```
 
-##### 取消订阅消息
-- **removeObserver**
-
+##### removeObserver
+- 取消订阅消息
 ```java
 LiveEventBus
 	.get("key_name", String.class)
 	.removeObserver(observer);
 ```
 
-##### Sticky模式
-
-支持在订阅消息的时候设置Sticky模式，这样订阅者可以接收到之前发送的消息。
-- **observeSticky**
-
-以Sticky模式订阅消息，具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
+##### observeSticky
+- Sticky模式
+- 支持在订阅消息的时候设置Sticky模式，这样订阅者可以接收到之前发送的消息。
+- 以Sticky模式订阅消息，具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
 ```java
 LiveEventBus
         .get("sticky_key", String.class)
@@ -136,9 +168,8 @@ LiveEventBus
             }
         });
 ```
-- **observeStickyForever**
-
-Forever模式订阅消息，需要调用removeObserver取消订阅，Sticky模式
+##### observeStickyForever
+- Forever模式订阅消息，需要调用removeObserver取消订阅，Sticky模式
 ```java
 LiveEventBus
         .get("sticky_key", String.class)
@@ -211,6 +242,7 @@ for androidx:
 
 版本 | 功能
 ---|---
+1.7.x | 优化接口设计，优化实现逻辑，修复一些问题
 1.6.x | 优化接口设计，优化实现逻辑，修复一些问题
 1.5.x | 优化接口设计，使用起来更简洁
 1.4.x | 简化对外暴露的接口，重构核心实现，支持前后台线程调用
