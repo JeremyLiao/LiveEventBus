@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.PostDelayActivity"/>
+        <activity android:name=".activity.PostDelayActivity" />
         <activity android:name=".LiveEventBusDemo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,9 @@
         <activity android:name=".activity.StickyActivity" />
         <activity android:name=".activity.TestActivity" />
         <activity android:name=".activity.ObserverActiveLevelActivity" />
+        <activity
+            android:name=".activity.IpcTestActivity"
+            android:process=":ipcTest" />
 
         <service
             android:name=".service.IpcService"

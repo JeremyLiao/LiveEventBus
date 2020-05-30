@@ -5,36 +5,22 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.jeremyliao.liveeventbus.LiveEventBus;
-import com.jeremyliao.liveeventbus.ipc.IpcConst;
-import com.jeremyliao.liveeventbus.ipc.decode.IDecoder;
-import com.jeremyliao.liveeventbus.ipc.decode.ValueDecoder;
-import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
+import com.jeremyliao.liveeventbus.ipc.consts.IpcConst;
+import com.jeremyliao.liveeventbus.ipc.core.ProcessorManager;
 
 /**
  * Created by liaohailiang on 2019/3/26.
  */
 public class LebIpcReceiver extends BroadcastReceiver {
 
-    private IDecoder decoder;
-
-    public LebIpcReceiver(JsonConverter jsonConverter) {
-        this.decoder = new ValueDecoder(jsonConverter);
-    }
-
-    public void setJsonConverter(JsonConverter jsonConverter) {
-        this.decoder = new ValueDecoder(jsonConverter);
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if (IpcConst.ACTION.equals(intent.getAction())) {
             try {
                 String key = intent.getStringExtra(IpcConst.KEY);
-                Object value = decoder.decode(intent);
-                if (key != null) {
-                    LiveEventBus
-                            .get(key)
-                            .post(value);
+                Object value = ProcessorManager.getManager().createFrom(intent);
+                if (key != null && value != null) {
+                    LiveEventBus.get(key).post(value);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

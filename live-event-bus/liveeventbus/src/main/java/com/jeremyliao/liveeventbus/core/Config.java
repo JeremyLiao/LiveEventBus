@@ -3,7 +3,6 @@ package com.jeremyliao.liveeventbus.core;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 import com.jeremyliao.liveeventbus.logger.Logger;
 import com.jeremyliao.liveeventbus.utils.AppUtils;
 
@@ -46,18 +45,6 @@ public class Config {
     public Config setContext(Context context) {
         AppUtils.init(context);
         LiveEventBusCore.get().registerReceiver();
-        return this;
-    }
-
-    /**
-     * setJsonConverter
-     * default use gson as json converter
-     *
-     * @param jsonConverter
-     * @return
-     */
-    public Config setJsonConverter(@NonNull JsonConverter jsonConverter) {
-        LiveEventBusCore.get().setJsonConverter(jsonConverter);
         return this;
     }
 

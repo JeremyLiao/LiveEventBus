@@ -1,6 +1,7 @@
 package com.jeremyliao.lebapp.activity;
 
 import android.arch.lifecycle.Observer;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -78,5 +79,13 @@ public class TestActivity extends AppCompatActivity {
         LiveEventBus
                 .get(KEY_TEST_OBSERVE_FOREVER, String.class)
                 .removeObserver(observer);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == IpcTestActivity.RESULT_CODE) {
+            strResult = data.getStringExtra(IpcTestActivity.RESULT_EXTRA_KEY);
+        }
     }
 }

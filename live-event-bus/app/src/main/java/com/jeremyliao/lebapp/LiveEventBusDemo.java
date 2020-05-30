@@ -31,6 +31,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     public static final String KEY_TEST_ACTIVE_LEVEL = "key_test_active_level";
     public static final String KEY_TEST_BROADCAST = "key_test_broadcast";
     public static final String KEY_TEST_BROADCAST_IN_APP = "key_test_broadcast_in_app";
+    public static final String KEY_TEST_BROADCAST_GLOBAL = "key_test_broadcast_global";
     public static final String KEY_TEST_DELAY_LIFE = "key_test_delay_life";
 
     private int sendCount = 0;
@@ -221,7 +222,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
 
     public void testBroadcastGlobal() {
         LiveEventBus
-                .get(KEY_TEST_BROADCAST_IN_APP)
+                .get(KEY_TEST_BROADCAST_GLOBAL)
                 .postAcrossApp("broadcast msg");
     }
 
