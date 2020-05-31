@@ -88,93 +88,99 @@ LiveEventBus
         .post(new DemoEvent("Hello world"));
 ```
 
-## 接口使用文档
-##### post
-- 进程内发送消息
-```java
-LiveEventBus
-	.get("key_name")
-	.post(value);
+## 详细使用文档
+### 获取Observable
+##### 通过name获取Observable
 ```
-##### postAcrossProcess
-- App内发送消息，跨进程使用
-```java
-LiveEventBus
-	.get("key_name")
-	.postAcrossProcess(value);
+Observable<T> get(@NonNull String key, @NonNull Class<T> type)
 ```
-##### postAcrossApp
-- App之间发送消息
-```java
-LiveEventBus
-	.get("key_name")
-	.postAcrossApp(value);
 ```
-##### postDelay
-- 进程内发送消息，延迟发送
-```java
-LiveEventBus
-	.get("key_name")
-	.postDelay(value, 1000);
+Observable<Object> get(@NonNull String key)
 ```
-##### postOrderly
-- 进程内发送消息，有序发送
-```java
-LiveEventBus
-	.get("key_name")
-	.postOrderly(value);
+##### 通过event type获取Observable
 ```
-
-##### observe
-- 以生命周期感知模式订阅消息
+<T extends LiveEvent> Observable<T> get(@NonNull Class<T> eventType)
+```
+### 消息发送
+##### 进程内发送消息
+```
+void post(T value)
+```
+##### App内发送消息，跨进程使用
+```java
+void postAcrossProcess(T value)
+```
+##### App之间发送消息
+```java
+void postAcrossApp(T value)
+```
+##### 进程内发送消息，延迟发送
+```java
+void postDelay(T value, long delay)
+```
+##### 进程内发送消息，延迟发送，带生命周期
+```
+void postDelay(LifecycleOwner sender, T value, long delay)
+```
+##### 进程内发送消息，有序发送
+```java
+void postOrderly(T value)
+```
+##### 以广播的形式发送一个消息
+- 需要跨进程、跨APP发送消息的时候调用该方法
+- 建议尽量使用postAcrossProcess、postAcrossApp
+```
+void broadcast(T value, boolean foreground, boolean onlyInApp)
+```
+### 消息订阅
+##### 以生命周期感知模式订阅消息
 - 具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
-```java
-LiveEventBus
-	.get("key_name", String.class)
-	.observe(this, new Observer<String>() {
-	    @Override
-	    public void onChanged(@Nullable String s) {
-	    }
-	});
 ```
-
-##### observeForever
-- 以Forever模式订阅和取消订阅消息
+void observe(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer)
+```
+##### 以Forever模式订阅和取消订阅消息
 - Forever模式订阅消息，需要调用removeObserver取消订阅
-```java
-LiveEventBus
-	.get("key_name", String.class)
-	.observeForever(observer);
 ```
-
-##### removeObserver
-- 取消订阅消息
-```java
-LiveEventBus
-	.get("key_name", String.class)
-	.removeObserver(observer);
+void observeForever(@NonNull Observer<T> observer)
 ```
-
-##### observeSticky
+##### 取消订阅消息
+```
+void removeObserver(@NonNull Observer<T> observer)
+```
+##### Sticky模式订阅消息
 - Sticky模式
 - 支持在订阅消息的时候设置Sticky模式，这样订阅者可以接收到之前发送的消息。
 - 以Sticky模式订阅消息，具有生命周期感知能力，LifecycleOwner销毁时自动取消订阅，不需要调用removeObserver
-```java
-LiveEventBus
-        .get("sticky_key", String.class)
-        .observeSticky(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s){
-            }
-        });
 ```
-##### observeStickyForever
+void observeSticky(@NonNull LifecycleOwner owner, @NonNull Observer<T> observer)
+```
+##### Sticky模式Forever订阅消息
 - Forever模式订阅消息，需要调用removeObserver取消订阅，Sticky模式
-```java
-LiveEventBus
-        .get("sticky_key", String.class)
-        .observeStickyForever(observer);
 ```
+void observeStickyForever(@NonNull Observer<T> observer)
+```
+### 跨进程消息
+##### 支持对基本数据类型消息的跨进程发送
+1. int
+2. float
+3. long
+4. boolean
+5. double
+6. String
+##### 支持Serializable和Parcelable类型消息的跨进程发送
+- 提供SerializableProcessor
+- 提供ParcelableProcessor
+##### 支持Bean类型消息的跨进程发送
+- 提供GsonProcessor以Gson方式提供支持
+- 需要用注解@IpcConfig指定GsonProcessor：
+```
+@IpcConfig(processor = GsonProcessor.class)
+```
+##### 支持自定义扩展
+- 实现自定义Processor，实现Processor接口
+- 用注解@IpcConfig指定自定义Processor
+
+### 老版本文档
 -  如果使用1.4.X版本，请参考[使用方法](docs/DIRECTION_1_4.md)
 -  如果使用1.3.X及以下版本，请参考[使用方法](docs/DIRECTION_1_3.md)
 
