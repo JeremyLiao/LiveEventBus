@@ -184,6 +184,14 @@ void observeStickyForever(@NonNull Observer<T> observer)
 -  如果使用1.4.X版本，请参考[使用方法](docs/DIRECTION_1_4.md)
 -  如果使用1.3.X及以下版本，请参考[使用方法](docs/DIRECTION_1_3.md)
 
+## 更多使用场景
+#### SmartEventBus
+SmartEventBus是一个Android平台的消息总线框架，这是一款非常smart的消息总线框架，能让你定制自己的消息总线。
+[SmartEventBus](https://github.com/JeremyLiao/SmartEventBus)
+
+#### 在组件化中使用LiveEventBus
+[android-modular](https://github.com/JeremyLiao/android-modular)
+
 ## 配置
 在Application.onCreate方法中配置：
 
@@ -275,15 +283,11 @@ for androidx:
 
 ## More Open Source by JeremyLiao
 
-1. [FastSharedPreferences](https://github.com/JeremyLiao/FastSharedPreferences) 一个Android平台的高性能key-value组件
-2. [tensorflow-lite-sdk](https://github.com/JeremyLiao/tensorflow-lite-sdk) 一个更加通用的Tensorflow-Lite Android SDK
-3. [android-modular](https://github.com/JeremyLiao/android-modular) 一个组件化实施方案的Demo
-4. [MessageBus](https://github.com/JeremyLiao/MessageBus) 一个android平台的基于订阅-发布模式的消息框架，支持跨进程消息通信
-5. [persistence](https://github.com/JeremyLiao/persistence) 一个android平台的key-value storage framework
-6. [LightRxAndroid](https://github.com/JeremyLiao/LightRxAndroid) 另辟蹊径，利用Android Handler实现了一个类似RxJava的链式框架
-7. [rxjava-retry](https://github.com/JeremyLiao/rxjava-retry) 封装了几个处理RxJava Retry操作的类
-8. [retrofit-mock](https://github.com/JeremyLiao/retrofit-mock) 一个用于Retrofit mock response数据的工具
-9. [jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo)  AndroidStudio运行jacoco计算测试覆盖率的Demo
-10. [android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 深入浅出Android Gradle
-11. [invoking-message](https://github.com/JeremyLiao/invoking-message) 消息总线框架，基于LiveEventBus实现。它颠覆了传统消息总线定义和使用的方式，通过链式的方法调用发送和接收消息，使用更简单
-12. [DataLoader](https://github.com/JeremyLiao/DataLoader) 一个Android异步数据加载框架，用于Activity打开之前预加载数据，页面启动速度优化利器
+1. [InterfaceLoader](https://github.com/JeremyLiao/InterfaceLoader) 史上最好用的Android跨进程接口调用框架件
+2. [FastSharedPreferences](https://github.com/JeremyLiao/FastSharedPreferences) 一个Android平台的高性能key-value组件
+3. [SmartEventBus](https://github.com/JeremyLiao/SmartEventBus) SmartEventBus是一个Android平台的消息总线框架，这是一款非常smart的消息总线框架，能让你定制自己的消息总线。
+4. [android-modular](https://github.com/JeremyLiao/android-modular) 一套Android组件化的实施方案和支撑框架
+5. [android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 深入浅出Android Gradle
+6. [DataLoader](https://github.com/JeremyLiao/DataLoader) 一个Android异步数据加载框架，用于Activity打开之前预加载数据，页面启动速度优化利器
+
+更多，[请点击](https://github.com/JeremyLiao?tab=repositories)
