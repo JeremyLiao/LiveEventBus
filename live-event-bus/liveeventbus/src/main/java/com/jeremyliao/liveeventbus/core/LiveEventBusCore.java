@@ -78,7 +78,6 @@ public final class LiveEventBusCore {
         lifecycleObserverAlwaysActive = true;
         autoClear = false;
         logger = new LoggerManager(new DefaultLogger());
-        JsonConverter converter = new GsonConverter();
         receiver = new LebIpcReceiver();
         registerReceiver();
     }
