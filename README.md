@@ -287,7 +287,20 @@ for androidx:
 2. [FastSharedPreferences](https://github.com/JeremyLiao/FastSharedPreferences) 一个Android平台的高性能key-value组件
 3. [SmartEventBus](https://github.com/JeremyLiao/SmartEventBus) SmartEventBus是一个Android平台的消息总线框架，这是一款非常smart的消息总线框架，能让你定制自己的消息总线。
 4. [android-modular](https://github.com/JeremyLiao/android-modular) 一套Android组件化的实施方案和支撑框架
-5. [android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 深入浅出Android Gradle
-6. [DataLoader](https://github.com/JeremyLiao/DataLoader) 一个Android异步数据加载框架，用于Activity打开之前预加载数据，页面启动速度优化利器
+5. [DataLoader](https://github.com/JeremyLiao/DataLoader) 一个Android异步数据加载框架，用于Activity打开之前预加载数据，页面启动速度优化利器
 
 更多，[请点击](https://github.com/JeremyLiao?tab=repositories)
+
+## 深入学习Android系列，让你精通Android
+#### Flutter系列
+- [JeremyLiao/flutter-learn](https://github.com/JeremyLiao/flutter-learn) 
+- [alibaba/flutter-go](https://github.com/alibaba/flutter-go) 
+#### Kotlin系列
+- [MindorksOpenSource/from-java-to-kotlin](https://github.com/MindorksOpenSource/from-java-to-kotlin) 
+- [JeremyLiao/kotlin-compare-to-java](https://github.com/JeremyLiao/kotlin-compare-to-java) 
+#### Gradle系列
+- [JeremyLiao/android-gradle-study](https://github.com/JeremyLiao/android-gradle-study) 
+#### 算法系列
+- [labuladong/fucking-algorithm](https://github.com/labuladong/fucking-algorithm) 
+#### 测试系列
+- [JeremyLiao/jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo) 
