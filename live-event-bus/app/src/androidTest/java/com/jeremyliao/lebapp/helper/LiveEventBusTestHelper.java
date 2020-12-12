@@ -28,6 +28,17 @@ public class LiveEventBusTestHelper {
         }
     }
 
+    public static void clearConfigs() {
+        try {
+            Field bus = LiveEventBusCore.class.getDeclaredField("observableConfigs");
+            bus.setAccessible(true);
+            Map map = (Map) bus.get(LiveEventBusCore.get());
+            map.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static Object getObject(String name) {
         try {
             Field field = LiveEventBusCore.class.getDeclaredField(name);

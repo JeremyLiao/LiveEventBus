@@ -30,5 +30,12 @@
             android:onClick="@{()->handler.sendMsgToPrevent()}"
             android:text="发送消息给已经Stop的Activity" />
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="@{()->handler.sendMsgToPreventSingle()}"
+            android:text="发送消息给已经Stop的Activity" />
+
     </LinearLayout>
 </layout>

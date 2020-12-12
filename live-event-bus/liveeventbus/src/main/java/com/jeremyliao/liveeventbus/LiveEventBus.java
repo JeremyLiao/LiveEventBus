@@ -6,6 +6,7 @@ import com.jeremyliao.liveeventbus.core.Config;
 import com.jeremyliao.liveeventbus.core.LiveEvent;
 import com.jeremyliao.liveeventbus.core.LiveEventBusCore;
 import com.jeremyliao.liveeventbus.core.Observable;
+import com.jeremyliao.liveeventbus.core.ObservableConfig;
 
 /**
  * _     _           _____                _  ______
@@ -63,5 +64,15 @@ public final class LiveEventBus {
      */
     public static Config config() {
         return LiveEventBusCore.get().config();
+    }
+
+    /**
+     * use the inner class Config to set params
+     * first of all, call config to get the Config instance
+     * then, call the method of Config to config LiveEventBus
+     * call this method in Application.onCreate
+     */
+    public static ObservableConfig config(@NonNull String key) {
+        return LiveEventBusCore.get().config(key);
     }
 }

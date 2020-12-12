@@ -29,6 +29,7 @@ public class LiveEventBusDemo extends AppCompatActivity {
     public static final String KEY_TEST_MSG_SET_BEFORE_ON_CREATE = "key_test_msg_set_before_on_create";
     public static final String KEY_TEST_CLOSE_ALL_PAGE = "key_test_close_all_page";
     public static final String KEY_TEST_ACTIVE_LEVEL = "key_test_active_level";
+    public static final String KEY_TEST_ACTIVE_LEVEL_SINGLE = "key_test_active_level_single";
     public static final String KEY_TEST_BROADCAST = "key_test_broadcast";
     public static final String KEY_TEST_BROADCAST_IN_APP = "key_test_broadcast_in_app";
     public static final String KEY_TEST_BROADCAST_GLOBAL = "key_test_broadcast_global";
@@ -93,7 +94,15 @@ public class LiveEventBusDemo extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
-
+        LiveEventBus
+                .get(KEY_TEST_ACTIVE_LEVEL_SINGLE, String.class)
+                .observe(this, new Observer<String>() {
+                    @Override
+                    public void onChanged(@Nullable String s) {
+                        Toast.makeText(LiveEventBusDemo.this, "Receive message: " + s,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
         LiveEventBus
                 .get(KEY_TEST_DELAY_LIFE, String.class)
                 .observe(this, new Observer<String>() {

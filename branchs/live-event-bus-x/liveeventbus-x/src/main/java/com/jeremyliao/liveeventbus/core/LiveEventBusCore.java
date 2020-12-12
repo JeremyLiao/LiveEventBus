@@ -60,6 +60,7 @@ public final class LiveEventBusCore {
     private boolean lifecycleObserverAlwaysActive;
     private boolean autoClear;
     private LoggerManager logger;
+    private final Map<String, ObservableConfig> observableConfigs;
 
     /**
      * 跨进程通信
@@ -74,6 +75,7 @@ public final class LiveEventBusCore {
 
     private LiveEventBusCore() {
         bus = new HashMap<>();
+        observableConfigs = new HashMap<>();
         lifecycleObserverAlwaysActive = true;
         autoClear = false;
         logger = new LoggerManager(new DefaultLogger());
@@ -96,6 +98,13 @@ public final class LiveEventBusCore {
      */
     public Config config() {
         return config;
+    }
+
+    public ObservableConfig config(String key) {
+        if (!observableConfigs.containsKey(key)) {
+            observableConfigs.put(key, new ObservableConfig());
+        }
+        return observableConfigs.get(key);
     }
 
     void setLogger(@NonNull Logger logger) {
@@ -137,7 +146,7 @@ public final class LiveEventBusCore {
 
         LiveEvent(@NonNull String key) {
             this.key = key;
-            this.liveData = new LifecycleLiveData<>();
+            this.liveData = new LifecycleLiveData<>(key);
         }
 
         /**
@@ -426,18 +435,45 @@ public final class LiveEventBusCore {
         }
 
         private class LifecycleLiveData<T> extends ExternalLiveData<T> {
+
+            private final String key;
+
+            public LifecycleLiveData(String key) {
+                this.key = key;
+            }
+
             @Override
             protected Lifecycle.State observerActiveLevel() {
-                return lifecycleObserverAlwaysActive ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
+                return lifecycleObserverAlwaysActive() ? Lifecycle.State.CREATED : Lifecycle.State.STARTED;
             }
 
             @Override
             public void removeObserver(@NonNull Observer<? super T> observer) {
                 super.removeObserver(observer);
-                if (autoClear && !liveData.hasObservers()) {
+                if (autoClear() && !liveData.hasObservers()) {
                     LiveEventBusCore.get().bus.remove(key);
                 }
                 logger.log(Level.INFO, "observer removed: " + observer);
+            }
+
+            private boolean lifecycleObserverAlwaysActive() {
+                if (observableConfigs.containsKey(key)) {
+                    ObservableConfig config = observableConfigs.get(key);
+                    if (config.lifecycleObserverAlwaysActive != null) {
+                        return config.lifecycleObserverAlwaysActive;
+                    }
+                }
+                return lifecycleObserverAlwaysActive;
+            }
+
+            private boolean autoClear() {
+                if (observableConfigs.containsKey(key)) {
+                    ObservableConfig config = observableConfigs.get(key);
+                    if (config.autoClear != null) {
+                        return config.autoClear;
+                    }
+                }
+                return autoClear;
             }
         }
 
