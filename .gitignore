@@ -95,3 +95,4 @@ aartojar/
 keystore
 captures
 repo/
+*publish*
