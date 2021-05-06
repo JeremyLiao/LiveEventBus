@@ -17,8 +17,6 @@ import android.support.annotation.Nullable;
 
 import com.jeremyliao.liveeventbus.ipc.consts.IpcConst;
 import com.jeremyliao.liveeventbus.ipc.core.ProcessorManager;
-import com.jeremyliao.liveeventbus.ipc.json.GsonConverter;
-import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
 import com.jeremyliao.liveeventbus.ipc.receiver.LebIpcReceiver;
 import com.jeremyliao.liveeventbus.logger.DefaultLogger;
 import com.jeremyliao.liveeventbus.logger.Logger;

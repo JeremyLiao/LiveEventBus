@@ -1,10 +1,11 @@
-package com.jeremyliao.liveeventbus.ipc.core;
+package com.jeremyliao.liveeventbus.processor.gson;
 
 import android.os.Bundle;
 
 import com.jeremyliao.liveeventbus.ipc.consts.IpcConst;
-import com.jeremyliao.liveeventbus.ipc.json.GsonConverter;
-import com.jeremyliao.liveeventbus.ipc.json.JsonConverter;
+import com.jeremyliao.liveeventbus.ipc.core.Processor;
+import com.jeremyliao.liveeventbus.processor.gson.converter.GsonConverter;
+import com.jeremyliao.liveeventbus.processor.gson.converter.JsonConverter;
 
 /**
  * Created by liaohailiang on 2019/5/30.

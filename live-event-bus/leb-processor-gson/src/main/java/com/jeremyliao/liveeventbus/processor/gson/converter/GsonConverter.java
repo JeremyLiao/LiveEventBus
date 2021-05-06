@@ -1,4 +1,4 @@
-package com.jeremyliao.liveeventbus.ipc.json;
+package com.jeremyliao.liveeventbus.processor.gson.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;

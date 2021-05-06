@@ -1,5 +1,6 @@
-apply plugin: 'com.android.library'
-
+plugins {
+    id 'com.android.library'
+}
 
 android {
     compileSdkVersion 27
@@ -17,10 +18,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
 }
 
 dependencies {
-    implementation "android.arch.lifecycle:extensions:1.1.1"
-    implementation "android.arch.lifecycle:livedata:1.1.1"
+    //liveeventbus
+    compileOnly project(':liveeventbus')
+//    compileOnly 'io.github.jeremyliao:live-event-bus:1.7.3.1'
+
+    implementation "com.google.code.gson:gson:2.8.6"
 }

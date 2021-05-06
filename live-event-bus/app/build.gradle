@@ -37,6 +37,9 @@ dependencies {
     implementation project(':liveeventbus')
 //    implementation 'io.github.jeremyliao:live-event-bus:1.7.3.1'
 
+    //gson
+    implementation project(':leb-processor-gson')
+
     //test
     testImplementation 'junit:junit:4.12'
 
