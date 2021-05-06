@@ -36,6 +36,8 @@ dependencies {
     //liveeventbus
     implementation project(':liveeventbus-x')
 
+    implementation project(':lebx-processor-gson')
+
     //test
     testImplementation 'junit:junit:4.12'
 

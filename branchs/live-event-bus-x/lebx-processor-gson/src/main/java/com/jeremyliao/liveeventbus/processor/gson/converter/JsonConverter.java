@@ -1,4 +1,4 @@
-package com.jeremyliao.liveeventbus.ipc.json;
+package com.jeremyliao.liveeventbus.processor.gson.converter;
 
 /**
  * Created by liaohailiang on 2019-09-29.
