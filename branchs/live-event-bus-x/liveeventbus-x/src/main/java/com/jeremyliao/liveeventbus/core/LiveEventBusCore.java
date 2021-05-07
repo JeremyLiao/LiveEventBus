@@ -95,6 +95,7 @@ public final class LiveEventBusCore {
      * first of all, call config to get the Config instance
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
+     * @return Config
      */
     public Config config() {
         return config;

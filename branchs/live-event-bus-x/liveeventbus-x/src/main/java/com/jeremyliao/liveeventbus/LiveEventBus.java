@@ -15,9 +15,9 @@ import com.jeremyliao.liveeventbus.core.ObservableConfig;
  * | |   | \ \ / / _ \  __\ \ / / _ \ '_ \| __| ___ \ | | / __|
  * | |___| |\ V /  __/ |___\ V /  __/ | | | |_| |_/ / |_| \__ \
  * \_____/_| \_/ \___\____/ \_/ \___|_| |_|\__\____/ \__,_|___/
- * <p>
- * <p>
- * <p>
+ *
+ *
+ *
  * Created by liaohailiang on 2019/1/21.
  */
 
@@ -26,10 +26,10 @@ public final class LiveEventBus {
     /**
      * get observable by key with type
      *
-     * @param key
-     * @param type
-     * @param <T>
-     * @return Observable<T>
+     * @param key String
+     * @param type Class
+     * @param <T> T
+     * @return Observable
      */
     public static <T> Observable<T> get(@NonNull String key, @NonNull Class<T> type) {
         return LiveEventBusCore.get().with(key, type);
@@ -38,8 +38,9 @@ public final class LiveEventBus {
     /**
      * get observable by key
      *
-     * @param key
-     * @return Observable<T>
+     * @param key String
+     * @param <T> T
+     * @return Observable
      */
     public static <T> Observable<T> get(@NonNull String key) {
         return (Observable<T>)get(key, Object.class);
@@ -48,9 +49,9 @@ public final class LiveEventBus {
     /**
      * get observable from eventType
      *
-     * @param eventType
-     * @param <T>
-     * @return Observable<T>
+     * @param eventType Class
+     * @param <T> T
+     * @return Observable
      */
     public static <T extends LiveEvent> Observable<T> get(@NonNull Class<T> eventType) {
         return get(eventType.getName(), eventType);
@@ -61,6 +62,7 @@ public final class LiveEventBus {
      * first of all, call config to get the Config instance
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
+     * @return Config
      */
     public static Config config() {
         return LiveEventBusCore.get().config();
@@ -71,6 +73,8 @@ public final class LiveEventBus {
      * first of all, call config to get the Config instance
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
+     * @param key String
+     * @return ObservableConfig
      */
     public static ObservableConfig config(@NonNull String key) {
         return LiveEventBusCore.get().config(key);

@@ -18,8 +18,8 @@ public class Config {
      * true: observer can always receive message
      * false: observer can only receive message when resumed
      *
-     * @param active
-     * @return
+     * @param active boolean
+     * @return Config
      */
     public Config lifecycleObserverAlwaysActive(boolean active) {
         LiveEventBusCore.get().setLifecycleObserverAlwaysActive(active);
@@ -27,7 +27,7 @@ public class Config {
     }
 
     /**
-     * @param clear
+     * @param clear boolean
      * @return true: clear livedata when no observer observe it
      * false: not clear livedata unless app was killed
      */
@@ -40,8 +40,8 @@ public class Config {
      * config broadcast
      * only if you called this method, you can use broadcastValue() to send broadcast message
      *
-     * @param context
-     * @return
+     * @param context Context
+     * @return Config
      */
     public Config setContext(Context context) {
         AppUtils.init(context);
@@ -52,7 +52,8 @@ public class Config {
     /**
      * setLogger, if not set, use DefaultLogger
      *
-     * @param logger
+     * @param logger Logger
+     * @return Config
      */
     public Config setLogger(@NonNull Logger logger) {
         LiveEventBusCore.get().setLogger(logger);
@@ -62,8 +63,8 @@ public class Config {
     /**
      * set logger enable or disable, default enable
      *
-     * @param enable
-     * @return
+     * @param enable boolean
+     * @return Config
      */
     public Config enableLogger(boolean enable) {
         LiveEventBusCore.get().enableLogger(enable);
