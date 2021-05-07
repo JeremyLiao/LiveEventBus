@@ -14,8 +14,8 @@ public class ObservableConfig {
      * true: observer can always receive message
      * false: observer can only receive message when resumed
      *
-     * @param active
-     * @return
+     * @param active boolean
+     * @return ObservableConfig
      */
     public ObservableConfig lifecycleObserverAlwaysActive(boolean active) {
         lifecycleObserverAlwaysActive = active;
@@ -23,7 +23,7 @@ public class ObservableConfig {
     }
 
     /**
-     * @param clear
+     * @param clear boolean
      * @return true: clear livedata when no observer observe it
      * false: not clear livedata unless app was killed
      */
