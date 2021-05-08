@@ -31,7 +31,7 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 #### 想了解更多？请点击：[全面了解Android消息总线](https://github.com/JeremyLiao/SmartEventBus/blob/master/docs/bus_all.md)
 
 ## 使用
-> ==1.8及以上==版本全面迁移至maven，同时groupID变为==io.github.jeremyliao==，==1.8以下==版本保留JCenter
+> 1.8及以上版本全面迁移至maven，同时groupID变为io.github.jeremyliao，1.8以下版本保留JCenter
 #### maven
 
 - 非AndroidX
