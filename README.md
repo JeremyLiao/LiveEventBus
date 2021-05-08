@@ -1,8 +1,7 @@
 # LiveEventBus
-![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.7.3-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus)
+![license](https://img.shields.io/github/license/JeremyLiao/LiveEventBus.svg) [![version](https://img.shields.io/badge/JCenter-v1.7.3-blue.svg)](https://mvnrepository.com/artifact/com.jeremyliao/live-event-bus) [![version](https://img.shields.io/badge/maven-v1.8.0-blue)](https://search.maven.org/artifact/io.github.jeremyliao/live-event-bus)
 
-LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP（最新版本1.7.2:new::tada::tada:）
-
+LiveEventBus是一款Android消息总线，基于LiveData，具有生命周期感知能力，支持Sticky，支持AndroidX，支持跨进程，支持跨APP
 ![logo](https://user-images.githubusercontent.com/23290617/68295106-97e64380-00cc-11ea-919d-605f123ec084.png)
 
 ## 为什么要用LiveEventBus
@@ -31,13 +30,25 @@ LiveEventBus | :white_check_mark: | :white_check_mark: | :white_check_mark: | :w
 
 #### 想了解更多？请点击：[全面了解Android消息总线](https://github.com/JeremyLiao/SmartEventBus/blob/master/docs/bus_all.md)
 
-## 在工程中引用
-Via Gradle:
+## 使用
+> ==1.8及以上==版本全面迁移至maven，同时groupID变为==io.github.jeremyliao==，==1.8以下==版本保留JCenter
+#### maven
+
+- 非AndroidX
+```
+implementation 'io.github.jeremyliao:live-event-bus:1.8.0'
+```
+- AndroidX
+```
+implementation 'io.github.jeremyliao:live-event-bus-x:1.8.0'
+```
+#### JCenter
+- 非AndroidX
 
 ```
 implementation 'com.jeremyliao:live-event-bus:1.7.3'
 ```
-For AndroidX:
+- AndroidX
 ```
 implementation 'com.jeremyliao:live-event-bus-x:1.7.3'
 ```
@@ -176,6 +187,16 @@ void observeStickyForever(@NonNull Observer<T> observer)
 ```
 @IpcConfig(processor = GsonProcessor.class)
 ```
+> 1.8及以上版本由于拆分了GsonProcessor，需要引入lebx-processor-gson
+
+- 非AndroidX
+```
+implementation 'io.github.jeremyliao:leb-processor-gson:x.x.x'
+```
+- AndroidX
+```
+implementation 'io.github.jeremyliao:lebx-processor-gson:x.x.x'
+```
 ##### 支持自定义扩展
 - 实现自定义Processor，实现Processor接口
 - 用注解@IpcConfig指定自定义Processor
@@ -256,6 +277,7 @@ for androidx:
 
 版本 | 功能
 ---|---
+1.8.x | 迁移至maven，拆分gson-converter
 1.7.x | 优化接口设计，优化实现逻辑，修复一些问题
 1.6.x | 优化接口设计，优化实现逻辑，修复一些问题
 1.5.x | 优化接口设计，使用起来更简洁
