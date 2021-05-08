@@ -244,8 +244,59 @@ for androidx:
 -keep class androidx.lifecycle.** { *; }
 -keep class androidx.arch.core.** { *; }
 ```
-## 遇到问题？
-如果遇到了一些使用上的问题（如收不到消息等），在版本1.6.1+上可以使用控制台辅助类Console获取LiveEventBus的内部信息，详见：：[Console的使用](docs/console.md)。若问题不能解决，请提issue。
+## 常见问题Q&A
+> Issues上最经常被提问的问题
+
+- Q：收不到消息怎么办？
+
+    A：通过Console.getInfo()获取即时的调试信息，主要去观察对应的key下面有没有你关注的Observer（[Console的用法](https://github.com/JeremyLiao/LiveEventBus/blob/master/docs/console.md)）
+    ```
+    *********Event info*********
+    Event name: key_test_delay_life
+        version: -1
+        hasActiveObservers: true
+        hasObservers: true
+        ActiveCount: 1
+        ObserverCount: 1
+        Observers: 
+            [com.jeremyliao.liveeventbus.core.LiveEventBusCore$ObserverWrapper@992681d=android.arch.lifecycle.ExternalLiveData$ExternalLifecycleBoundObserver@bc258f4]
+    ```
+- Q：收到重复的消息怎么办？
+
+    A：同样通过Console.getInfo()获取即时的调试信息，主要去观察有没有重复注册的Observer（[Console的用法](https://github.com/JeremyLiao/LiveEventBus/blob/master/docs/console.md)）
+    
+- Q：JCenter要关闭了，什么时候迁移？
+
+    A：1.8及以上版本全面迁移至maven，同时groupID变为io.github.jeremyliao，1.8以下版本保留JCenter
+    
+- Q：如何传递List<String>或者Pair<Boolean, Double>这种泛型对象？
+
+    A：代码上的写法有两种，供参考：
+        
+    ```
+    LiveEventBus
+            .get(KEY_TEST_OBSERVE_FOREVER, List.class)
+            .observeForever(new Observer<List>() {
+                @Override
+                public void onChanged(@Nullable List list) {
+                    List<String> stringList = list;
+                }
+            });
+    ```
+    
+    ```
+    Observable<List<String>> observable = LiveEventBus.get(KEY_TEST_OBSERVE_FOREVER);
+    observable.observeForever(new Observer<List<String>>() {
+        @Override
+        public void onChanged(@Nullable List<String> strings) {
+        }
+    });
+    ```
+- Q：项目中不用Gson库，如何去掉依赖？
+
+    A：使用1.8以上的版本，对gson相关代码进行了拆分
+
+> 若问题不能解决，请提issue。
 
 ## 其他分支版本
 #### [AndroidX](/branchs/live-event-bus-x/liveeventbus-x/src/main/java/com/jeremyliao/liveeventbus)
