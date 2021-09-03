@@ -378,4 +378,4 @@ for androidx:
 #### 测试系列
 - [JeremyLiao/jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo) 
 	
-### [招聘|抖音成都招聘](https://github.com/JeremyLiao/ByteDanceRecruit)
+### [招聘|抖音成都招聘|有兴趣的同学可以点进去看一下，谢谢](https://github.com/JeremyLiao/ByteDanceRecruit)
