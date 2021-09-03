@@ -377,3 +377,5 @@ for androidx:
 - [labuladong/fucking-algorithm](https://github.com/labuladong/fucking-algorithm) 
 #### 测试系列
 - [JeremyLiao/jacoco-android-demo](https://github.com/JeremyLiao/jacoco-android-demo) 
+	
+### [招聘|抖音成都招聘](https://github.com/JeremyLiao/ByteDanceRecruit)
