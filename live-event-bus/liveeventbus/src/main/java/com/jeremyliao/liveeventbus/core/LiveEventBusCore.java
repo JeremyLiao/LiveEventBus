@@ -6,6 +6,7 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -94,6 +95,7 @@ public final class LiveEventBusCore {
      * first of all, call config to get the Config instance
      * then, call the method of Config to config LiveEventBus
      * call this method in Application.onCreate
+     *
      * @return Config
      */
     public Config config() {
@@ -123,7 +125,11 @@ public final class LiveEventBusCore {
         if (application != null) {
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(IpcConst.ACTION);
-            application.registerReceiver(receiver, intentFilter);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                application.registerReceiver(receiver, intentFilter, Context.RECEIVER_EXPORTED);
+            } else {
+                application.registerReceiver(receiver, intentFilter);
+            }
             isRegisterReceiver = true;
         }
     }
